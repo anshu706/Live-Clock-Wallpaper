@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ChronoWall – Live Clock Wallpapers</title>
+  <meta name="description" content="Stunning live clock wallpapers that show your real PC time. Choose from 8 unique animated clock designs — Neon, Cosmic, Matrix, Aurora & more." />
+  <meta property="og:title" content="ChronoWall – Live Clock Wallpapers" />
+  <meta property="og:description" content="Free animated clock wallpapers synced to your system time." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;500;600;700;800&family=Orbitron:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ============ NAV ============ -->
+  <nav id="navbar">
+    <div class="nav-inner">
+      <div class="nav-logo">
+        <span class="logo-icon">⧖</span>
+        <span class="logo-text">ChronoWall</span>
+      </div>
+      <ul class="nav-links">
+        <li><a href="#gallery">Gallery</a></li>
+        <li><a href="#features">Features</a></li>
+        <li><a href="#how">How to Use</a></li>
+      </ul>
+      <div class="nav-live-time" id="navTime"></div>
+    </div>
+  </nav>
+
+  <!-- ============ HERO ============ -->
+  <section id="hero">
+    <div class="hero-bg">
+      <div class="hero-orb orb1"></div>
+      <div class="hero-orb orb2"></div>
+      <div class="hero-orb orb3"></div>
+      <canvas id="heroStars"></canvas>
+    </div>
+    <div class="hero-content">
+      <div class="hero-badge">✦ Live Wallpapers • Real Time • Free</div>
+      <h1 class="hero-title">Your Clock.<br/><span class="gradient-text">Your Canvas.</span></h1>
+      <p class="hero-sub">8 stunning animated clock wallpapers synced to your system time. Download, set as wallpaper, and let your desktop come alive.</p>
+      <div class="hero-cta">
+        <a href="#gallery" class="btn-primary">Browse Gallery ↓</a>
+        <a href="#how" class="btn-ghost">How to Use</a>
+      </div>
+      <div class="hero-stats">
+        <div class="stat"><span class="stat-num">12</span><span class="stat-label">Unique Clocks</span></div>
+        <div class="stat-divider"></div>
+        <div class="stat"><span class="stat-num">HD</span><span class="stat-label">Quality</span></div>
+        <div class="stat-divider"></div>
+        <div class="stat"><span class="stat-num">Live</span><span class="stat-label">Real Time</span></div>
+      </div>
+    </div>
+    <!-- Hero Clock Preview -->
+    <div class="hero-clock-wrap">
+      <div class="hero-clock-frame">
+        <canvas id="heroClock" width="340" height="340"></canvas>
+        <div class="hero-clock-label">Cosmic Orbit — Live Preview</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ GALLERY ============ -->
+  <section id="gallery">
+    <div class="section-header">
+      <div class="section-tag">Gallery</div>
+      <h2>Choose Your <span class="gradient-text">Masterpiece</span></h2>
+      <p>Every clock is animated, synced to your system time, and looks incredible on any display.</p>
+    </div>
+    <div class="clock-grid" id="clockGrid">
+
+      <!-- Card 1: Neon Pulse -->
+      <article class="clock-card" id="card-neon" data-theme="neon">
+        <div class="card-preview">
+          <canvas class="preview-canvas" id="preview-neon" width="280" height="180"></canvas>
+        </div>
+        <div class="card-info">
+          <div class="card-badge neon-badge">Neon</div>
+          <h3>Neon Pulse</h3>
+          <p>Electric neon digits with pulsing glow on a dark grid background.</p>
+          <div class="card-actions">
+            <button class="btn-preview" onclick="openPreview('neon')" id="btn-preview-neon">⤢ Preview</button>
+            <button class="btn-download" onclick="downloadWallpaper('neon')" id="btn-download-neon">↓ Download</button>
+          </div>
+        </div>
+      </article>
+
+      <!-- Card 2: Cosmic Orbit -->
+      <article class="clock-card" id="card-cosmic" data-theme="cosmic">
+        <div class="card-preview">
+          <canvas class="preview-canvas" id="preview-cosmic" width="280" height="180"></canvas>
+        </div>
+        <div class="card-info">
+          <div class="card-badge cosmic-badge">Cosmic</div>
+          <h3>Cosmic Orbit</h3>
+          <p>Orbiting planet rings with starfield and galaxy glow in deep space.</p>
+          <div class="card-actions">
+            <button class="btn-preview" onclick="openPreview('cosmic')" id="btn-preview-cosmic">⤢ Preview</button>
+            <button class="btn-download" onclick="downloadWallpaper('cosmic')" id="btn-download-cosmic">↓ Download</button>
+          </div>
+        </div>
+      </article>
+
+      <!-- Card 3: Aurora -->
+      <article class="clock-card" id="card-aurora" data-theme="aurora">
+        <div class="card-preview">
+          <canvas class="preview-canvas" id="preview-aurora" width="280" height="180"></canvas>
+        </div>
+        <div class="card-info">
+          <div class="card-badge aurora-badge">Aurora</div>
+          <h3>Aurora Borealis</h3>
+          <p>Flowing northern lights in vivid greens and purples with crisp time display.</p>
+          <div class="card-actions">
+            <button class="btn-preview" onclick="openPreview('aurora')" id="btn-preview-aurora">⤢ Preview</button>
+            <button class="btn-download" onclick="downloadWallpaper('aurora')" id="btn-download-aurora">↓ Download</button>
+          </div>
+        </div>
+      </article>
+
+      <!-- Card 4: Matrix -->
+      <article class="clock-card" id="card-matrix" data-theme="matrix">
+        <div class="card-preview">
+          <canvas class="preview-canvas" id="preview-matrix" width="280" height="180"></canvas>
+        </div>
+        <div class="card-info">
+          <div class="card-badge matrix-badge">Matrix</div>
+          <h3>Digital Rain</h3>
+          <p>Classic green matrix code rain with bold digital time overlay.</p>
+          <div class="card-actions">
+            <button class="btn-preview" onclick="openPreview('matrix')" id="btn-preview-matrix">⤢ Preview</button>
+            <button class="btn-download" onclick="downloadWallpaper('matrix')" id="btn-download-matrix">↓ Download</button>
+          </div>
+        </div>
+      </article>
+
+      <!-- Card 5: Minimal Zen -->
+      <article class="clock-card" id="card-zen" data-theme="zen">
+        <div class="card-preview">
+          <canvas class="preview-canvas" id="preview-zen" width="280" height="180"></canvas>
+        </div>
+        <div class="card-info">
+          <div class="card-badge zen-badge">Minimal</div>
+          <h3>Minimal Zen</h3>
+          <p>Clean analog clock with breathing gradients and whisper-thin hands.</p>
+          <div class="card-actions">
+            <button class="btn-preview" onclick="openPreview('zen')" id="btn-preview-zen">⤢ Preview</button>
+            <button class="btn-download" onclick="downloadWallpaper('zen')" id="btn-download-zen">↓ Download</button>
+          </div>
+        </div>
+      </article>
+
+      <!-- Card 6: Retro Flip -->
+      <article class="clock-card" id="card-retro" data-theme="retro">
+        <div class="card-preview">
+          <canvas class="preview-canvas" id="preview-retro" width="280" height="180"></canvas>
+        </div>
+        <div class="card-info">
+          <div class="card-badge retro-badge">Retro</div>
+          <h3>Retro Flip</h3>
+          <p>Vintage split-flap display with warm amber lighting and film grain.</p>
+          <div class="card-actions">
+            <button class="btn-preview" onclick="openPreview('retro')" id="btn-preview-retro">⤢ Preview</button>
+            <button class="btn-download" onclick="downloadWallpaper('retro')" id="btn-download-retro">↓ Download</button>
+          </div>
+        </div>
+      </article>
+
+      <!-- Card 7: Holographic -->
+      <article class="clock-card" id="card-holo" data-theme="holo">
+        <div class="card-preview">
+          <canvas class="preview-canvas" id="preview-holo" width="280" height="180"></canvas>
+        </div>
+        <div class="card-info">
+          <div class="card-badge holo-badge">Holo</div>
+          <h3>Holographic</h3>
+          <p>Futuristic HUD with scanlines, prismatic glow, and floating hex data.</p>
+          <div class="card-actions">
+            <button class="btn-preview" onclick="openPreview('holo')" id="btn-preview-holo">⤢ Preview</button>
+            <button class="btn-download" onclick="downloadWallpaper('holo')" id="btn-download-holo">↓ Download</button>
+          </div>
+        </div>
+      </article>
+
+      <!-- Card 9: Midnight Luxe -->
+      <article class="clock-card" id="card-luxe" data-theme="luxe">
+        <div class="card-preview">
+          <canvas class="preview-canvas" id="preview-luxe" width="280" height="180"></canvas>
+        </div>
+        <div class="card-info">
+          <div class="card-badge luxe-badge">Luxe</div>
+          <h3>Midnight Luxe</h3>
+          <p>Elegant analog face with sweeping gold hands on a brushed metal midnight background.</p>
+          <div class="card-actions">
+            <button class="btn-preview" onclick="openPreview('luxe')" id="btn-preview-luxe">⤢ Preview</button>
+            <button class="btn-download" onclick="downloadWallpaper('luxe')" id="btn-download-luxe">↓ Download</button>
+          </div>
+        </div>
+      </article>
+
+      <!-- Card 10: Ocean Depths -->
+      <article class="clock-card" id="card-ocean" data-theme="ocean">
+        <div class="card-preview">
+          <canvas class="preview-canvas" id="preview-ocean" width="280" height="180"></canvas>
+        </div>
+        <div class="card-info">
+          <div class="card-badge ocean-badge">Ocean</div>
+          <h3>Ocean Depths</h3>
+          <p>Fluid underwater ripples with minimalist analog hands and coral accents.</p>
+          <div class="card-actions">
+            <button class="btn-preview" onclick="openPreview('ocean')" id="btn-preview-ocean">⤢ Preview</button>
+            <button class="btn-download" onclick="downloadWallpaper('ocean')" id="btn-download-ocean">↓ Download</button>
+          </div>
+        </div>
+      </article>
+
+      <!-- Card 11: Steampunk -->
+      <article class="clock-card" id="card-steam" data-theme="steam">
+        <div class="card-preview">
+          <canvas class="preview-canvas" id="preview-steam" width="280" height="180"></canvas>
+        </div>
+        <div class="card-info">
+          <div class="card-badge steam-badge">Steampunk</div>
+          <h3>Brass Gears</h3>
+          <p>Intricate rotating gears and brass analog hands in a classic steampunk style.</p>
+          <div class="card-actions">
+            <button class="btn-preview" onclick="openPreview('steam')" id="btn-preview-steam">⤢ Preview</button>
+            <button class="btn-download" onclick="downloadWallpaper('steam')" id="btn-download-steam">↓ Download</button>
+          </div>
+        </div>
+      </article>
+
+      <!-- Card 12: Sakura -->
+      <article class="clock-card" id="card-sakura" data-theme="sakura">
+        <div class="card-preview">
+          <canvas class="preview-canvas" id="preview-sakura" width="280" height="180"></canvas>
+        </div>
+        <div class="card-info">
+          <div class="card-badge sakura-badge">Sakura</div>
+          <h3>Cherry Blossom</h3>
+          <p>Falling sakura petals and a delicate paper-textured analog face.</p>
+          <div class="card-actions">
+            <button class="btn-preview" onclick="openPreview('sakura')" id="btn-preview-sakura">⤢ Preview</button>
+            <button class="btn-download" onclick="downloadWallpaper('sakura')" id="btn-download-sakura">↓ Download</button>
+          </div>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ============ FEATURES ============ -->
+  <section id="features">
+    <div class="section-header">
+      <div class="section-tag">Features</div>
+      <h2>Why <span class="gradient-text">ChronoWall?</span></h2>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">⏱</div>
+        <h4>Real-Time Sync</h4>
+        <p>Every clock reads your actual PC system time, updated every second with zero lag.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🎨</div>
+        <h4>12 Unique Styles</h4>
+        <p>From retro flip-boards to deep space orbits — curated designs for every taste.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📥</div>
+        <h4>Instant Download</h4>
+        <p>Grab a high-res static snapshot or open full-screen to use as a live page wallpaper.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🖥</div>
+        <h4>Fullscreen Mode</h4>
+        <p>One click to open any clock full-screen — perfect for a second monitor or stream overlay.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">⚡</div>
+        <h4>Lightweight</h4>
+        <p>Pure HTML + Canvas. No heavy frameworks, no tracking — blazing fast on any machine.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🆓</div>
+        <h4>100% Free</h4>
+        <p>All wallpapers are completely free to use, download, and share. No sign-up required.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ HOW TO USE ============ -->
+  <section id="how">
+    <div class="section-header">
+      <div class="section-tag">How to Use</div>
+      <h2>Set It Up in <span class="gradient-text">3 Steps</span></h2>
+    </div>
+    <div class="steps-row">
+      <div class="step">
+        <div class="step-num">01</div>
+        <h4>Pick a Clock</h4>
+        <p>Browse the gallery above and find the clock style that speaks to you.</p>
+      </div>
+      <div class="step-arrow">→</div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <h4>Open Fullscreen</h4>
+        <p>Click <strong>Preview</strong> to open the clock full-screen on your browser.</p>
+      </div>
+      <div class="step-arrow">→</div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <h4>Set as Wallpaper</h4>
+        <p>Use <strong>Lively Wallpaper</strong> (Windows) or <strong>Wallpaper Engine</strong> to set the URL as a live web wallpaper.</p>
+      </div>
+    </div>
+    <div class="how-tip">
+      <span>💡</span>
+      <span><strong>Tip:</strong> Use <a href="https://rocksdanister.github.io/lively/" target="_blank">Lively Wallpaper</a> (free, open source) on Windows — just paste the clock's preview URL and it runs live on your desktop!</span>
+    </div>
+  </section>
+
+  <!-- ============ FOOTER ============ -->
+  <footer id="footer">
+    <div class="footer-inner">
+      <div class="footer-logo">
+        <span class="logo-icon">⧖</span>
+        <span class="logo-text">ChronoWall</span>
+      </div>
+      <p class="footer-sub">Time is the most beautiful art. Let it live on your desktop.</p>
+      <div class="footer-live">
+        <span>Your current time: </span>
+        <span id="footerTime" class="footer-time"></span>
+      </div>
+      <p class="footer-copy">© 2026 ChronoWall · Made with ♡ · Free forever</p>
+    </div>
+  </footer>
+
+  <!-- ============ FULLSCREEN MODAL ============ -->
+  <div id="previewModal" class="modal" role="dialog" aria-modal="true" aria-label="Clock Preview">
+    <div class="modal-controls">
+      <span class="modal-title" id="modalTitle"></span>
+      <div class="modal-btns">
+        <button id="modalDownload" class="modal-btn-dl" onclick="downloadCurrentPreview()">↓ Download</button>
+        <button id="modalClose" class="modal-btn-close" onclick="closePreview()" aria-label="Close">✕</button>
+      </div>
+    </div>
+    <canvas id="modalCanvas"></canvas>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
