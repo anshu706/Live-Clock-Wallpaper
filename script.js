@@ -1372,85 +1372,132 @@ function escClose(e) {
 
 // ─────────────────────────────────────────────
 // DOWNLOAD LIVE WALLPAPER (Standalone HTML)
+// Uses toString() to inline all code — works locally & on GitHub Pages
 // ─────────────────────────────────────────────
-async function downloadWallpaper(theme) {
-  try {
-    const btn = document.getElementById(`btn-download-${theme}`);
-    const originalText = btn ? btn.innerHTML : '↓ Download';
-    if (btn) btn.innerHTML = 'Downloading...';
 
-    // Fetch the script to bundle it
-    const resp = await fetch('script.js');
-    if (!resp.ok) throw new Error("Failed to fetch script");
-    let jsText = await resp.text();
+// Collect all global state declarations per theme
+const THEME_GLOBALS = {
+  matrix:  `let matrixDrops = [];`,
+  holo:    `let holoAngle = 0;\nlet hexParticles = [];`,
+  cosmic:  `let cosmicParticles = [];\nlet cosmicAngle = 0;`,
+  aurora:  `let auroraWaves = [];`,
+  crystal: `let crystalParticles = [];\nlet crystalPetals = [];`,
+  sakura:  `let sakuraPetals = [];`,
+  ocean:   `let oceanTime = 0;`,
+  steam:   ``,
+  neon:    ``,
+  zen:     ``,
+  retro:   ``,
+  luxe:    ``,
+};
 
-    // Strip the website init logic from the script so it doesn't try to run gallery code
-    const initIdx = jsText.indexOf("window.addEventListener('load'");
-    if (initIdx !== -1) {
-      jsText = jsText.substring(0, initIdx);
-    }
+// Map theme → which helper init functions it needs (by reference)
+function getThemeHelpers(theme) {
+  const map = {
+    matrix:  typeof initMatrixDrops  === 'function' ? [initMatrixDrops]  : [],
+    holo:    typeof initHexParticles === 'function' ? [initHexParticles] : [],
+    cosmic:  typeof initCosmicParticles === 'function' ? [initCosmicParticles] : [],
+    aurora:  typeof initAuroraWaves  === 'function' ? [initAuroraWaves]  : [],
+    crystal: typeof initCrystal      === 'function' ? [initCrystal]      : [],
+  };
+  return (map[theme] || []).map(fn => fn.toString()).join('\n\n');
+}
 
-    const html = `<!DOCTYPE html>
+function buildStandaloneHTML(theme) {
+  const clock = CLOCKS[theme];
+
+  // Inline all shared utility functions
+  const utils = [getTime, lerp, hsl, drawHand]
+    .map(fn => fn.toString())
+    .join('\n\n');
+
+  const globals   = THEME_GLOBALS[theme] || '';
+  const helpers   = getThemeHelpers(theme);
+  const drawFnSrc = clock.fn.toString();
+
+  // Ensure the draw function has its original name
+  const fnName    = clock.fn.name || `draw_${theme}`;
+  const namedDraw = drawFnSrc.startsWith(`function ${fnName}`)
+    ? drawFnSrc
+    : drawFnSrc.replace(/^function\s*\w*\s*/, `function ${fnName} `);
+
+  return `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>ChronoWall - ${CLOCKS[theme].name}</title>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;500;600;700;800&family=Orbitron:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ChronoWall \u2013 ${clock.name}</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;500;600;700;800&family=Orbitron:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    body, html { margin: 0; padding: 0; overflow: hidden; background: #000; width: 100vw; height: 100vh; }
-    canvas { display: block; width: 100%; height: 100%; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
+    canvas { display: block; width: 100vw; height: 100vh; }
   </style>
 </head>
 <body>
-  <canvas id="wallpaperCanvas"></canvas>
+  <canvas id="c"></canvas>
   <script>
-${jsText}
+'use strict';
 
-// --- Standalone Wallpaper Initialization ---
-const canvas = document.getElementById('wallpaperCanvas');
-const ctx = canvas.getContext('2d');
+// ── Utilities ──
+${utils}
 
+// ── Theme globals ──
+${globals}
+
+// ── Helper inits ──
+${helpers}
+
+// ── Draw function ──
+${namedDraw}
+
+// ── Bootstrap ──
+const canvas = document.getElementById('c');
+const ctx    = canvas.getContext('2d');
 function resize() {
-  canvas.width = window.innerWidth;
+  canvas.width  = window.innerWidth;
   canvas.height = window.innerHeight;
 }
 window.addEventListener('resize', resize);
 resize();
-
-function loop() {
-  CLOCKS['${theme}'].fn(ctx, canvas.width, canvas.height);
+(function loop() {
+  ${fnName}(ctx, canvas.width, canvas.height);
   requestAnimationFrame(loop);
-}
-loop();
+})();
   <\/script>
 </body>
 </html>`;
+}
 
-    // Trigger download
+function downloadWallpaper(theme) {
+  const btn          = document.getElementById(`btn-download-${theme}`);
+  const originalText = btn ? btn.innerHTML : '\u2193 Download';
+  if (btn) { btn.innerHTML = '\u23F3 Building\u2026'; btn.disabled = true; }
+
+  try {
+    const html = buildStandaloneHTML(theme);
     const blob = new Blob([html], { type: 'text/html' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `ChronoWall_${theme}_live.html`;
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href     = url;
+    a.download = `ChronoWall_${CLOCKS[theme].name.replace(/\s+/g,'_')}_live.html`;
+    document.body.appendChild(a);
     a.click();
+    document.body.removeChild(a);
     URL.revokeObjectURL(url);
-    
-    if (btn) btn.innerHTML = originalText;
+
+    if (btn) { btn.innerHTML = '\u2713 Downloaded!'; btn.disabled = false; }
+    setTimeout(() => { if (btn) btn.innerHTML = originalText; }, 2000);
+
   } catch (err) {
-    console.error("Download failed:", err);
-    alert("Could not build the live wallpaper. Please ensure you are viewing this via a web server (e.g. localhost) so scripts can be fetched.");
+    console.error('Download failed:', err);
+    if (btn) { btn.innerHTML = originalText; btn.disabled = false; }
+    alert('Download failed: ' + err.message);
   }
 }
 
 function downloadCurrentPreview() {
-  if (activeTheme) {
-    const modalBtn = document.getElementById('modalDownload');
-    const originalText = modalBtn.innerHTML;
-    modalBtn.innerHTML = 'Downloading...';
-    downloadWallpaper(activeTheme).then(() => {
-      modalBtn.innerHTML = originalText;
-    });
-  }
+  if (activeTheme) downloadWallpaper(activeTheme);
 }
 
 // ─────────────────────────────────────────────
