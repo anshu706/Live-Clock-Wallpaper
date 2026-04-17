@@ -15,7 +15,7 @@ Turn your desktop into a living canvas with beautiful, real-time animated clock 
 **ChronoWall** is a lightweight web project that showcases animated clock wallpapers built with pure HTML, CSS, and Canvas JavaScript.
 
 Each design is synchronized with your local system time and can be:
-- previewed in fullscreen,
+- previewed in full screen,
 - downloaded as a standalone live HTML wallpaper,
 - used with desktop wallpaper tools like **Lively Wallpaper** or **Wallpaper Engine**.
 
@@ -70,7 +70,7 @@ Live-Clock-Wallpaper/
 ## 🖼 Using as a Live Wallpaper
 
 1. Open the app and choose a design.
-2. Click **Preview** to test fullscreen.
+2. Click **Preview** to test full screen.
 3. Click **Download** to export a standalone live HTML file.
 4. Import that file into:
    - **Lively Wallpaper** (Windows, free), or
