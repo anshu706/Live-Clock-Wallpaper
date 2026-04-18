@@ -1266,6 +1266,137 @@ function drawSakura(ctx, w, h) {
 }
 
 // ─────────────────────────────────────────────
+// 13. AVIATOR DASH (Analog)
+// ─────────────────────────────────────────────
+function drawAviator(ctx, w, h) {
+  const t = getTime();
+  const cx = w / 2, cy = h / 2;
+  const R = Math.min(w, h) * 0.38;
+
+  ctx.fillStyle = '#0f1112';
+  ctx.fillRect(0, 0, w, h);
+
+  ctx.beginPath(); ctx.arc(cx, cy, R*1.02, 0, Math.PI * 2);
+  ctx.fillStyle = '#1c1e20'; ctx.fill();
+  ctx.lineWidth = 2; ctx.strokeStyle = '#333'; ctx.stroke();
+
+  ctx.beginPath(); ctx.arc(cx, cy, R, 0, Math.PI * 2);
+  ctx.fillStyle = '#0a0a0a'; ctx.fill();
+
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  
+  for (let i = 0; i < 60; i++) {
+    const angle = (i / 60) * Math.PI * 2 - Math.PI / 2;
+    const isHour = i % 5 === 0;
+    
+    const ir = R * (isHour ? 0.85 : 0.92);
+    const or = R * 0.98;
+    ctx.beginPath();
+    ctx.moveTo(cx + Math.cos(angle) * ir, cy + Math.sin(angle) * ir);
+    ctx.lineTo(cx + Math.cos(angle) * or, cy + Math.sin(angle) * or);
+    
+    ctx.strokeStyle = isHour ? '#fff' : '#666';
+    ctx.lineWidth = isHour ? 3 : 1;
+    ctx.stroke();
+
+    if (isHour) {
+      const hourVal = i === 0 ? 12 : i / 5;
+      const nr = R * 0.7;
+      ctx.font = `bold ${R*0.18}px sans-serif`;
+      ctx.fillStyle = '#e8f0df';
+      ctx.fillText(hourVal, cx + Math.cos(angle)*nr, cy + Math.sin(angle)*nr + R*0.02);
+      
+      if (hourVal === 12) {
+        ctx.fillStyle = '#0a0a0a';
+        ctx.fillRect(cx - R*0.15, cy - R*0.8, R*0.3, R*0.2); 
+        
+        ctx.beginPath();
+        ctx.moveTo(cx, cy - R*0.8);
+        ctx.lineTo(cx - R*0.06, cy - R*0.65);
+        ctx.lineTo(cx + R*0.06, cy - R*0.65);
+        ctx.closePath();
+        ctx.fillStyle = '#ccff99';
+        ctx.fill();
+        ctx.beginPath(); ctx.arc(cx - R*0.12, cy - R*0.72, R*0.02, 0, Math.PI*2); ctx.fill();
+        ctx.beginPath(); ctx.arc(cx + R*0.12, cy - R*0.72, R*0.02, 0, Math.PI*2); ctx.fill();
+      }
+    }
+  }
+
+  const dx = cx + R * 0.4;
+  const dy = cy;
+  ctx.fillStyle = '#111';
+  roundRect(ctx, dx - R*0.1, dy - R*0.08, R*0.2, R*0.16, 4);
+  ctx.fill();
+  ctx.strokeStyle = '#333'; ctx.stroke();
+  const d = new Date();
+  ctx.font = `bold ${R*0.12}px sans-serif`;
+  ctx.fillStyle = '#fff';
+  ctx.fillText(d.getDate(), dx, dy + R*0.015);
+
+  const hAngle = ((t.h12 + t.m / 60) / 12) * Math.PI * 2 - Math.PI / 2;
+  drawHand(ctx, cx, cy, hAngle, R * 0.55, '#fff', R*0.06, R * 0.1);
+  const mAngle = ((t.m + t.s / 60) / 60) * Math.PI * 2 - Math.PI / 2;
+  drawHand(ctx, cx, cy, mAngle, R * 0.85, '#fff', R*0.04, R * 0.15);
+  const sAngle = ((t.s + t.ms/1000) / 60) * Math.PI * 2 - Math.PI / 2;
+  drawHand(ctx, cx, cy, sAngle, R * 0.9, '#ff3333', R*0.015, R * 0.2);
+  
+  ctx.beginPath(); ctx.arc(cx, cy, R*0.04, 0, Math.PI*2); ctx.fillStyle='#ff3333'; ctx.fill();
+}
+
+// ─────────────────────────────────────────────
+// 14. SWISS STATION (Analog)
+// ─────────────────────────────────────────────
+function drawSwiss(ctx, w, h) {
+  const t = getTime();
+  const cx = w / 2, cy = h / 2;
+  const R = Math.min(w, h) * 0.38;
+
+  ctx.fillStyle = '#e6e6e6';
+  ctx.fillRect(0, 0, w, h);
+
+  ctx.beginPath(); ctx.arc(cx, cy, R*1.05, 0, Math.PI * 2);
+  ctx.fillStyle = '#cccccc'; ctx.fill();
+  ctx.beginPath(); ctx.arc(cx, cy, R, 0, Math.PI * 2);
+  ctx.fillStyle = '#ffffff'; ctx.fill();
+  
+  for (let i = 0; i < 60; i++) {
+    const angle = (i / 60) * Math.PI * 2 - Math.PI / 2;
+    const isHour = i % 5 === 0;
+    const ir = R * (isHour ? 0.75 : 0.9);
+    const or = R * 0.98;
+    ctx.beginPath();
+    ctx.moveTo(cx + Math.cos(angle) * ir, cy + Math.sin(angle) * ir);
+    ctx.lineTo(cx + Math.cos(angle) * or, cy + Math.sin(angle) * or);
+    ctx.strokeStyle = '#000';
+    ctx.lineWidth = isHour ? R*0.05 : R*0.015;
+    ctx.lineCap = 'square';
+    ctx.stroke();
+  }
+  ctx.lineCap = 'round';
+
+  const hAngle = ((t.h12 + t.m / 60) / 12) * Math.PI * 2 - Math.PI / 2;
+  ctx.save(); ctx.translate(cx, cy); ctx.rotate(hAngle);
+  ctx.fillStyle = '#000'; ctx.fillRect(-R*0.03, -R*0.6, R*0.06, R*0.75);
+  ctx.restore();
+
+  const mAngle = ((t.m + t.s / 60) / 60) * Math.PI * 2 - Math.PI / 2;
+  ctx.save(); ctx.translate(cx, cy); ctx.rotate(mAngle);
+  ctx.fillStyle = '#000'; ctx.fillRect(-R*0.02, -R*0.9, R*0.04, R*1.1);
+  ctx.restore();
+
+  const sAngle = ((t.s + t.ms/1000) / 60) * Math.PI * 2 - Math.PI / 2;
+  ctx.save(); ctx.translate(cx, cy); ctx.rotate(sAngle);
+  ctx.fillStyle = '#ff0000'; 
+  ctx.fillRect(-R*0.015, -R*0.65, R*0.03, R*0.9);
+  ctx.beginPath(); ctx.arc(0, -R*0.75, R*0.1, 0, Math.PI*2); ctx.fill();
+  ctx.restore();
+  
+  ctx.beginPath(); ctx.arc(cx, cy, R*0.02, 0, Math.PI*2); ctx.fillStyle='#ff0000'; ctx.fill();
+}
+
+// ─────────────────────────────────────────────
 
 // RENDERER MAP
 // ─────────────────────────────────────────────
@@ -1281,7 +1412,9 @@ const CLOCKS = {
   luxe:    { fn: drawLuxe,    name: 'Midnight Luxe' },
   ocean:   { fn: drawOcean,   name: 'Ocean Depths' },
   steam:   { fn: drawSteam,   name: 'Steampunk' },
-  sakura:  { fn: drawSakura,  name: 'Cherry Blossom' }
+  sakura:  { fn: drawSakura,  name: 'Cherry Blossom' },
+  aviator: { fn: drawAviator, name: 'Aviator Dash' },
+  swiss:   { fn: drawSwiss,   name: 'Swiss Station' }
 };
 
 // ─────────────────────────────────────────────
@@ -1389,6 +1522,8 @@ const THEME_GLOBALS = {
   zen:     ``,
   retro:   ``,
   luxe:    ``,
+  aviator: ``,
+  swiss:   ``,
 };
 
 // Map theme → which helper init functions it needs (by reference)
