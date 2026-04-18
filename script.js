@@ -1510,16 +1510,16 @@ function escClose(e) {
 
 // Collect all global state declarations per theme
 const THEME_GLOBALS = {
-  matrix:  `let matrixDrops = [];`,
+  matrix:  `const matrixDrops = {};\nconst matrixChars = 'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789ABCDEF';\nlet matrixFrame = 0;`,
   holo:    `let holoAngle = 0;\nlet hexParticles = [];`,
-  cosmic:  `let cosmicParticles = [];\nlet cosmicAngle = 0;`,
-  aurora:  `let auroraWaves = [];`,
+  cosmic:  `let cosmicAngle = 0;`,
+  aurora:  `let auroraOffset = 0;`,
   crystal: `let crystalParticles = [];\nlet crystalPetals = [];`,
   sakura:  `let sakuraPetals = [];`,
   ocean:   `let oceanTime = 0;`,
+  zen:     `let zenHue = 220;\nlet zenHueDir = 0.05;`,
   steam:   ``,
   neon:    ``,
-  zen:     ``,
   retro:   ``,
   luxe:    ``,
   aviator: ``,
@@ -1531,8 +1531,6 @@ function getThemeHelpers(theme) {
   const map = {
     matrix:  typeof initMatrixDrops  === 'function' ? [initMatrixDrops]  : [],
     holo:    typeof initHexParticles === 'function' ? [initHexParticles] : [],
-    cosmic:  typeof initCosmicParticles === 'function' ? [initCosmicParticles] : [],
-    aurora:  typeof initAuroraWaves  === 'function' ? [initAuroraWaves]  : [],
     crystal: typeof initCrystal      === 'function' ? [initCrystal]      : [],
   };
   return (map[theme] || []).map(fn => fn.toString()).join('\n\n');
@@ -1542,7 +1540,7 @@ function buildStandaloneHTML(theme) {
   const clock = CLOCKS[theme];
 
   // Inline all shared utility functions
-  const utils = [getTime, lerp, hsl, drawHand]
+  const utils = [getTime, lerp, hsl, drawHand, roundRect]
     .map(fn => fn.toString())
     .join('\n\n');
 
