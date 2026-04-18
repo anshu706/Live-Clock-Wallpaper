@@ -512,15 +512,15 @@ function drawZen(ctx, w, h) {
   }
 
   // Hour hand
-  const hAngle = ((t.h12 + t.m / 60) / 12) * Math.PI * 2 - Math.PI / 2;
+  const hAngle = ((t.h12 + t.m / 60) / 12) * Math.PI * 2;
   drawHand(ctx, cx, cy, hAngle, R * 0.52, `hsla(${zenHue},70%,85%,0.95)`, 3, R * 0.1);
 
   // Minute hand
-  const mAngle = ((t.m + t.s / 60) / 60) * Math.PI * 2 - Math.PI / 2;
+  const mAngle = ((t.m + t.s / 60) / 60) * Math.PI * 2;
   drawHand(ctx, cx, cy, mAngle, R * 0.78, `hsla(${zenHue},60%,80%,0.9)`, 2, R * 0.12);
 
   // Second hand
-  const sAngle = ((t.s + t.ms / 1000) / 60) * Math.PI * 2 - Math.PI / 2;
+  const sAngle = ((t.s + t.ms / 1000) / 60) * Math.PI * 2;
   ctx.save();
   ctx.translate(cx, cy);
   ctx.rotate(sAngle);
@@ -998,15 +998,15 @@ function drawLuxe(ctx, w, h) {
   }
 
   // Hour hand
-  const hAngle = ((t.h12 + t.m / 60) / 12) * Math.PI * 2 - Math.PI / 2;
+  const hAngle = ((t.h12 + t.m / 60) / 12) * Math.PI * 2;
   drawHand(ctx, cx, cy, hAngle, R * 0.5, '#e5be01', 5, R * 0.1);
 
   // Minute hand
-  const mAngle = ((t.m + t.s / 60) / 60) * Math.PI * 2 - Math.PI / 2;
+  const mAngle = ((t.m + t.s / 60) / 60) * Math.PI * 2;
   drawHand(ctx, cx, cy, mAngle, R * 0.75, '#ffe55c', 3, R * 0.15);
 
   // Second hand
-  const sAngle = ((t.s + t.ms / 1000) / 60) * Math.PI * 2 - Math.PI / 2;
+  const sAngle = ((t.s + t.ms / 1000) / 60) * Math.PI * 2;
   drawHand(ctx, cx, cy, sAngle, R * 0.85, '#ff4500', 1.5, R * 0.2);
 
   // Center cap
@@ -1062,15 +1062,15 @@ function drawOcean(ctx, w, h) {
   }
 
   // Hour hand
-  const hAngle = ((t.h12 + t.m / 60) / 12) * Math.PI * 2 - Math.PI / 2;
+  const hAngle = ((t.h12 + t.m / 60) / 12) * Math.PI * 2;
   drawHand(ctx, cx, cy, hAngle, R * 0.45, '#90e0ef', 4, R * 0.05);
 
   // Minute hand
-  const mAngle = ((t.m + t.s / 60) / 60) * Math.PI * 2 - Math.PI / 2;
+  const mAngle = ((t.m + t.s / 60) / 60) * Math.PI * 2;
   drawHand(ctx, cx, cy, mAngle, R * 0.7, '#caf0f8', 2.5, R * 0.1);
 
   // Second hand (coral accent)
-  const sAngle = ((t.s + t.ms / 1000) / 60) * Math.PI * 2 - Math.PI / 2;
+  const sAngle = ((t.s + t.ms / 1000) / 60) * Math.PI * 2;
   drawHand(ctx, cx, cy, sAngle, R * 0.8, '#ff7096', 1, R * 0.2);
 
   // Small center dot
@@ -1147,17 +1147,17 @@ function drawSteam(ctx, w, h) {
   }
 
   // Hour hand
-  const hAngle = ((t.h12 + t.m / 60) / 12) * Math.PI * 2 - Math.PI / 2;
+  const hAngle = ((t.h12 + t.m / 60) / 12) * Math.PI * 2;
   drawHand(ctx, cx, cy, hAngle, R * 0.45, '#1a1a1a', 6, R * 0.1);
   drawHand(ctx, cx, cy, hAngle, R * 0.43, '#b87333', 2, R * 0.08); // inner detail
 
   // Minute hand
-  const mAngle = ((t.m + t.s / 60) / 60) * Math.PI * 2 - Math.PI / 2;
+  const mAngle = ((t.m + t.s / 60) / 60) * Math.PI * 2;
   drawHand(ctx, cx, cy, mAngle, R * 0.7, '#1a1a1a', 4, R * 0.15);
   drawHand(ctx, cx, cy, mAngle, R * 0.68, '#b87333', 1.5, R * 0.13); // inner detail
 
   // Second hand
-  const sAngle = ((t.s + t.ms / 1000) / 60) * Math.PI * 2 - Math.PI / 2;
+  const sAngle = ((t.s + t.ms / 1000) / 60) * Math.PI * 2;
   drawHand(ctx, cx, cy, sAngle, R * 0.8, '#8c1c1c', 2, R * 0.2); // deep red second hand
   
   // Center Bolt
@@ -1238,15 +1238,15 @@ function drawSakura(ctx, w, h) {
   }
 
   // Hour hand
-  const hAngle = ((t.h12 + t.m / 60) / 12) * Math.PI * 2 - Math.PI / 2;
+  const hAngle = ((t.h12 + t.m / 60) / 12) * Math.PI * 2;
   drawHand(ctx, cx, cy, hAngle, R * 0.45, '#5c4033', 3, R * 0.1); // Dark brown wood color
 
   // Minute hand
-  const mAngle = ((t.m + t.s / 60) / 60) * Math.PI * 2 - Math.PI / 2;
+  const mAngle = ((t.m + t.s / 60) / 60) * Math.PI * 2;
   drawHand(ctx, cx, cy, mAngle, R * 0.75, '#7a5a4a', 2, R * 0.15);
 
   // Second hand
-  const sAngle = ((t.s + t.ms / 1000) / 60) * Math.PI * 2 - Math.PI / 2;
+  const sAngle = ((t.s + t.ms / 1000) / 60) * Math.PI * 2;
   drawHand(ctx, cx, cy, sAngle, R * 0.85, '#ff809b', 1, R * 0.2);
 
   // Center blossom
@@ -1335,11 +1335,11 @@ function drawAviator(ctx, w, h) {
   ctx.fillStyle = '#fff';
   ctx.fillText(d.getDate(), dx, dy + R*0.015);
 
-  const hAngle = ((t.h12 + t.m / 60) / 12) * Math.PI * 2 - Math.PI / 2;
+  const hAngle = ((t.h12 + t.m / 60) / 12) * Math.PI * 2;
   drawHand(ctx, cx, cy, hAngle, R * 0.55, '#fff', R*0.06, R * 0.1);
-  const mAngle = ((t.m + t.s / 60) / 60) * Math.PI * 2 - Math.PI / 2;
+  const mAngle = ((t.m + t.s / 60) / 60) * Math.PI * 2;
   drawHand(ctx, cx, cy, mAngle, R * 0.85, '#fff', R*0.04, R * 0.15);
-  const sAngle = ((t.s + t.ms/1000) / 60) * Math.PI * 2 - Math.PI / 2;
+  const sAngle = ((t.s + t.ms/1000) / 60) * Math.PI * 2;
   drawHand(ctx, cx, cy, sAngle, R * 0.9, '#ff3333', R*0.015, R * 0.2);
   
   ctx.beginPath(); ctx.arc(cx, cy, R*0.04, 0, Math.PI*2); ctx.fillStyle='#ff3333'; ctx.fill();
@@ -1376,17 +1376,17 @@ function drawSwiss(ctx, w, h) {
   }
   ctx.lineCap = 'round';
 
-  const hAngle = ((t.h12 + t.m / 60) / 12) * Math.PI * 2 - Math.PI / 2;
+  const hAngle = ((t.h12 + t.m / 60) / 12) * Math.PI * 2;
   ctx.save(); ctx.translate(cx, cy); ctx.rotate(hAngle);
   ctx.fillStyle = '#000'; ctx.fillRect(-R*0.03, -R*0.6, R*0.06, R*0.75);
   ctx.restore();
 
-  const mAngle = ((t.m + t.s / 60) / 60) * Math.PI * 2 - Math.PI / 2;
+  const mAngle = ((t.m + t.s / 60) / 60) * Math.PI * 2;
   ctx.save(); ctx.translate(cx, cy); ctx.rotate(mAngle);
   ctx.fillStyle = '#000'; ctx.fillRect(-R*0.02, -R*0.9, R*0.04, R*1.1);
   ctx.restore();
 
-  const sAngle = ((t.s + t.ms/1000) / 60) * Math.PI * 2 - Math.PI / 2;
+  const sAngle = ((t.s + t.ms/1000) / 60) * Math.PI * 2;
   ctx.save(); ctx.translate(cx, cy); ctx.rotate(sAngle);
   ctx.fillStyle = '#ff0000'; 
   ctx.fillRect(-R*0.015, -R*0.65, R*0.03, R*0.9);
