@@ -1,6 +1,6 @@
 <div align="center">
 
-# ⏰ ChronoWall — Live Clock Wallpaper Gallery
+# ⏰ Prism — Live Clock Wallpaper Gallery
 
 Turn your desktop into a living canvas with beautiful, real-time animated clock wallpapers.
 
@@ -12,7 +12,7 @@ Turn your desktop into a living canvas with beautiful, real-time animated clock 
 
 ## ✨ What is this?
 
-**ChronoWall** is a lightweight web project that showcases animated clock wallpapers built with pure HTML, CSS, and Canvas JavaScript.
+**Prism** is a lightweight web project that showcases animated clock wallpapers built with pure HTML, CSS, and Canvas JavaScript.
 
 Each design is synchronized with your local system time and can be:
 - previewed in full screen,
@@ -88,4 +88,4 @@ You can improve themes, performance, UI polish, or add new clock styles.
 ## 💙 Credits
 
 Created by **[anshu706](https://github.com/anshu706)**  
-Project name in UI: **ChronoWall**
+Project name in UI: **Prism**

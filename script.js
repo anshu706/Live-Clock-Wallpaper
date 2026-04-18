@@ -1,5 +1,5 @@
 /* =============================================
-   ChronoWall – script.js
+   Prism – script.js
    All clock renderers + site logic
    ============================================= */
 
@@ -1559,7 +1559,7 @@ function buildStandaloneHTML(theme) {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ChronoWall \u2013 ${clock.name}</title>
+  <title>Prism \u2013 ${clock.name}</title>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;500;600;700;800&family=Orbitron:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -1613,7 +1613,7 @@ function downloadWallpaper(theme) {
     const url  = URL.createObjectURL(blob);
     const a    = document.createElement('a');
     a.href     = url;
-    a.download = `ChronoWall_${CLOCKS[theme].name.replace(/\s+/g,'_')}_live.html`;
+    a.download = `Prism_${CLOCKS[theme].name.replace(/\s+/g,'_')}_live.html`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
