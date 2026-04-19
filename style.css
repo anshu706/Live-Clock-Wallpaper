@@ -421,6 +421,13 @@ section {
 .ocean-badge   { background: rgba(0,180,216,0.12);  color: #00b4d8;         border: 1px solid rgba(0,180,216,0.3); }
 .steam-badge   { background: rgba(205,127,50,0.12); color: #cd7f32;         border: 1px solid rgba(205,127,50,0.3); }
 .sakura-badge  { background: rgba(255,183,197,0.12); color: #ffb7c5;        border: 1px solid rgba(255,183,197,0.3); }
+.cyber-badge   { background: rgba(0,255,255,0.12);  color: #00ffff;         border: 1px solid rgba(0,255,255,0.3); }
+.radar-badge   { background: rgba(0,255,0,0.12);    color: #4ade80;         border: 1px solid rgba(0,255,0,0.3); }
+.molten-badge  { background: rgba(255,69,0,0.12);   color: #ff4500;         border: 1px solid rgba(255,69,0,0.3); }
+.circuit-badge { background: rgba(0,255,128,0.12);  color: #00ff80;         border: 1px solid rgba(0,255,128,0.3); }
+.city-badge    { background: rgba(192,132,252,0.12); color: #c084fc;        border: 1px solid rgba(192,132,252,0.3); }
+.void-badge    { background: rgba(255,255,255,0.05); color: #94a3b8;        border: 1px solid rgba(255,255,255,0.2); }
+.cyan-badge    { background: rgba(34,211,238,0.12); color: #22d3ee;         border: 1px solid rgba(34,211,238,0.3); }
 
 .card-info h3 {
   font-family: var(--font-out);
@@ -764,3 +771,15 @@ section {
 .clock-card:nth-child(10) { animation-delay: 0.50s; }
 .clock-card:nth-child(11) { animation-delay: 0.55s; }
 .clock-card:nth-child(12) { animation-delay: 0.60s; }
+.clock-card:nth-child(13) { animation-delay: 0.65s; }
+.clock-card:nth-child(14) { animation-delay: 0.70s; }
+.clock-card:nth-child(15) { animation-delay: 0.75s; }
+.clock-card:nth-child(16) { animation-delay: 0.80s; }
+.clock-card:nth-child(17) { animation-delay: 0.85s; }
+.clock-card:nth-child(18) { animation-delay: 0.90s; }
+.clock-card:nth-child(19) { animation-delay: 0.95s; }
+.clock-card:nth-child(20) { animation-delay: 1.00s; }
+.clock-card:nth-child(21) { animation-delay: 1.05s; }
+.clock-card:nth-child(22) { animation-delay: 1.10s; }
+.clock-card:nth-child(23) { animation-delay: 1.15s; }
+.clock-card:nth-child(24) { animation-delay: 1.20s; }

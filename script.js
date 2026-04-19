@@ -1414,7 +1414,17 @@ const CLOCKS = {
   steam:   { fn: drawSteam,   name: 'Steampunk' },
   sakura:  { fn: drawSakura,  name: 'Cherry Blossom' },
   aviator: { fn: drawAviator, name: 'Aviator Dash' },
-  swiss:   { fn: drawSwiss,   name: 'Swiss Station' }
+  swiss:   { fn: drawSwiss,   name: 'Swiss Station' },
+  cyber:   { fn: drawCyber,   name: 'Cyber Glitch' },
+  solar:   { fn: drawSolar,   name: 'Solar Eclipse' },
+  radar:   { fn: drawRadar,   name: 'Radar Sweep' },
+  binary:  { fn: drawBinary,  name: 'Binary Rain' },
+  molten:  { fn: drawMolten,  name: 'Cracked Magma' },
+  circuit: { fn: drawCircuit, name: 'Mainboard Glow' },
+  city:    { fn: drawCity,    name: 'Synthwave Nights' },
+  void:    { fn: drawVoid,    name: 'The Watcher' },
+  sea:     { fn: drawSea,     name: 'Luminescent Abyss' },
+  infinity:{ fn: drawInfinity, name: 'Infinity Loop' }
 };
 
 // ─────────────────────────────────────────────
@@ -1524,16 +1534,631 @@ const THEME_GLOBALS = {
   luxe:    ``,
   aviator: ``,
   swiss:   ``,
+  cyber:   `let cyberGlitchTime = 0;`,
+  solar:   ``,
+  radar:   `let radarAngle = 0;`,
+  binary:  `let binaryDrops = {};\nlet binaryFrame = 0;`,
+  molten:  `let moltenParticles = [];`,
+  circuit: `let circuitNodes = [];`,
+  city:    `let cityOffset = 0;`,
+  void:    `let voidParticles = [];`,
+  sea:     `let seaRipples = [];`,
+  infinity: `let infinityStep = 0;`,
 };
 
 // Map theme → which helper init functions it needs (by reference)
 function getThemeHelpers(theme) {
   const map = {
     matrix:  typeof initMatrixDrops  === 'function' ? [initMatrixDrops]  : [],
+    binary:  typeof initBinaryDrops  === 'function' ? [initBinaryDrops]  : [],
     holo:    typeof initHexParticles === 'function' ? [initHexParticles] : [],
     crystal: typeof initCrystal      === 'function' ? [initCrystal]      : [],
+    molten:  typeof initMolten       === 'function' ? [initMolten]       : [],
+    circuit: typeof initCircuit      === 'function' ? [initCircuit]      : [],
+    void:    typeof initVoid         === 'function' ? [initVoid]         : [],
+    sea:     typeof initSea          === 'function' ? [initSea]          : [],
   };
   return (map[theme] || []).map(fn => fn.toString()).join('\n\n');
+}
+
+/* ── 15. CYBER GLITCH ─────────────────────────── */
+let cyberGlitchTime = 0;
+function drawCyber(ctx, w, h) {
+  const t = getTime();
+  const cx = w / 2, cy = h / 2;
+  cyberGlitchTime += 0.05;
+
+  ctx.fillStyle = '#050510';
+  ctx.fillRect(0, 0, w, h);
+
+  // Digital noise
+  if (Math.random() > 0.95) {
+    ctx.fillStyle = 'rgba(255,0,255,0.05)';
+    ctx.fillRect(0, Math.random() * h, w, 20);
+  }
+
+  // Scanning line
+  const scanY = (cyberGlitchTime * 100) % h;
+  ctx.fillStyle = 'rgba(0, 255, 255, 0.1)';
+  ctx.fillRect(0, scanY, w, 2);
+
+  const timeStr = `${t.pad12}:${t.pad(t.m)}:${t.pad(t.s)}`;
+  ctx.font = `bold ${Math.min(w,h)*0.15}px 'Orbitron', sans-serif`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+
+  // Glitch layers
+  const offset = Math.sin(cyberGlitchTime * 10) * 2;
+  if (Math.random() > 0.1) {
+    ctx.fillStyle = '#ff00ff';
+    ctx.fillText(timeStr, cx + offset, cy);
+    ctx.fillStyle = '#00ffff';
+    ctx.fillText(timeStr, cx - offset, cy);
+  }
+
+  ctx.fillStyle = '#fff';
+  ctx.fillText(timeStr, cx, cy);
+
+  // Sub-data
+  ctx.font = `${Math.min(w,h)*0.04}px 'Orbitron', monospace`;
+  ctx.fillStyle = 'rgba(0,255,255,0.6)';
+  ctx.fillText(`STATUS: ONLINE // SYNC_LOCK: ${t.s % 2 === 0 ? 'TRUE' : 'FALSE'}`, cx, cy + Math.min(w,h) * 0.18);
+}
+
+/* ── 16. SOLAR ECLIPSE ────────────────────────── */
+function drawSolar(ctx, w, h) {
+  const t = getTime();
+  const cx = w / 2, cy = h / 2;
+  const R = Math.min(w, h) * 0.32;
+  const now = performance.now() / 1000;
+
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, w, h);
+
+  // Corona glow
+  const coronaGrd = ctx.createRadialGradient(cx, cy, R * 0.9, cx, cy, R * 1.5);
+  coronaGrd.addColorStop(0, 'rgba(255, 255, 255, 0.8)');
+  coronaGrd.addColorStop(0.2, 'rgba(255, 200, 100, 0.4)');
+  coronaGrd.addColorStop(1, 'transparent');
+  
+  ctx.save();
+  ctx.globalCompositeOperation = 'screen';
+  for (let i = 0; i < 3; i++) {
+    const s = 1 + Math.sin(now + i) * 0.05;
+    ctx.fillStyle = coronaGrd;
+    ctx.beginPath();
+    ctx.arc(cx + Math.cos(now * 0.5) * 5, cy + Math.sin(now * 0.5) * 5, R * 1.4 * s, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  ctx.restore();
+
+  // Dark Moon
+  ctx.fillStyle = '#050505';
+  ctx.beginPath();
+  ctx.arc(cx, cy, R, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Thin ring index
+  ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+  ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.arc(cx, cy, R * 1.05, 0, Math.PI * 2); ctx.stroke();
+
+  // Light beam hands
+  function beamHand(angle, len, width, color) {
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.rotate(angle);
+    const grd = ctx.createLinearGradient(0, 0, 0, -len);
+    grd.addColorStop(0, color);
+    grd.addColorStop(1, 'transparent');
+    ctx.fillStyle = grd;
+    ctx.shadowBlur = 15; ctx.shadowColor = color;
+    ctx.fillRect(-width / 2, 0, width, -len);
+    ctx.restore();
+  }
+
+  const hAngle = ((t.h12 + t.m / 60) / 12) * Math.PI * 2;
+  const mAngle = ((t.m + t.s / 60) / 60) * Math.PI * 2;
+  const sAngle = ((t.s + t.ms / 1000) / 60) * Math.PI * 2;
+
+  beamHand(hAngle, R * 0.6, 4, 'rgba(255,255,255,0.8)');
+  beamHand(mAngle, R * 0.9, 3, 'rgba(200,220,255,0.7)');
+  beamHand(sAngle, R * 1.1, 1, 'rgba(255,100,0,0.9)');
+}
+
+/* ── 17. RADAR SWEEP ──────────────────────────── */
+let radarAngle = 0;
+function drawRadar(ctx, w, h) {
+  const t = getTime();
+  const cx = w / 2, cy = h / 2;
+  const R = Math.min(w, h) * 0.4;
+  radarAngle += 0.03;
+
+  ctx.fillStyle = '#030803';
+  ctx.fillRect(0, 0, w, h);
+
+  // Background circles
+  ctx.strokeStyle = 'rgba(0, 255, 100, 0.1)';
+  ctx.lineWidth = 1;
+  for (let i = 1; i <= 4; i++) {
+    ctx.beginPath();
+    ctx.arc(cx, cy, R * (i / 4), 0, Math.PI * 2);
+    ctx.stroke();
+  }
+
+  // Crosshairs
+  ctx.beginPath();
+  ctx.moveTo(cx - R, cy); ctx.lineTo(cx + R, cy);
+  ctx.moveTo(cx, cy - R); ctx.lineTo(cx, cy + R);
+  ctx.stroke();
+
+  // Radar sweep
+  const grd = ctx.createConicGradient(radarAngle, cx, cy);
+  grd.addColorStop(0, 'rgba(0, 255, 100, 0.4)');
+  grd.addColorStop(0.1, 'rgba(0, 255, 100, 0)');
+  grd.addColorStop(1, 'rgba(0, 255, 100, 0)');
+  
+  ctx.fillStyle = grd;
+  ctx.beginPath();
+  ctx.moveTo(cx, cy);
+  ctx.arc(cx, cy, R, radarAngle, radarAngle + Math.PI * 0.2);
+  ctx.fill();
+
+  // Time Blips (Analog marks)
+  for (let i = 0; i < 12; i++) {
+    const angle = (i / 12) * Math.PI * 2 - Math.PI / 2;
+    const px = cx + Math.cos(angle) * R * 0.85;
+    const py = cy + Math.sin(angle) * R * 0.85;
+    
+    // Pulse effect
+    const dist = (angle - radarAngle + Math.PI * 2.5) % (Math.PI * 2);
+    const alpha = dist < 0.5 ? 1 : 0.2;
+    
+    ctx.fillStyle = `rgba(0, 255, 100, ${alpha})`;
+    ctx.beginPath();
+    ctx.arc(px, py, 4, 0, Math.PI * 2);
+    ctx.fill();
+    if (alpha > 0.5) {
+      ctx.shadowBlur = 10; ctx.shadowColor = '#0f0';
+      ctx.stroke();
+      ctx.shadowBlur = 0;
+    }
+  }
+
+  // Digital overlay
+  ctx.font = `800 ${Math.min(w,h) * 0.08}px 'Orbitron', monospace`;
+  ctx.fillStyle = 'rgba(0, 255, 100, 0.8)';
+  ctx.textAlign = 'right';
+  ctx.fillText(`${t.pad12}:${t.pad(t.m)}:${t.pad(t.s)}`, w - 30, h - 30);
+  
+  // Center dot
+  ctx.beginPath(); ctx.arc(cx, cy, 3, 0, Math.PI * 2); ctx.fillStyle = '#0f0'; ctx.fill();
+}
+
+/* ── 18. BINARY RAIN ──────────────────────────── */
+const binaryDrops = {};
+function initBinaryDrops(w, h) {
+  const cols = Math.floor(w / 14);
+  for (let i = 0; i < cols; i++) {
+    if (binaryDrops[i] === undefined) binaryDrops[i] = Math.random() * -h;
+  }
+}
+
+let binaryFrame = 0;
+function drawBinary(ctx, w, h) {
+  const t = getTime();
+  const cx = w / 2, cy = h / 2;
+  initBinaryDrops(w, h);
+
+  ctx.fillStyle = 'rgba(0, 10, 15, 0.2)';
+  ctx.fillRect(0, 0, w, h);
+
+  binaryFrame++;
+  const fs = 14;
+  const cols = Math.floor(w / fs);
+  
+  ctx.font = `${fs}px monospace`;
+  for (let i = 0; i < cols; i++) {
+    const char = Math.random() > 0.5 ? '1' : '0';
+    ctx.fillStyle = `rgba(0, 210, 255, ${Math.random()})`;
+    ctx.fillText(char, i * fs, binaryDrops[i]);
+    
+    binaryDrops[i] += fs * 0.5;
+    if (binaryDrops[i] > h) binaryDrops[i] = Math.random() * -100;
+  }
+
+  // Time Window
+  const tw = Math.min(w, h) * 0.6;
+  const th = Math.min(w, h) * 0.25;
+  ctx.fillStyle = 'rgba(0, 5, 10, 0.9)';
+  ctx.strokeStyle = '#00d2ff';
+  ctx.lineWidth = 2;
+  roundRect(ctx, cx - tw/2, cy - th/2, tw, th, 10);
+  ctx.fill(); ctx.stroke();
+
+  ctx.font = `bold ${Math.min(w,h)*0.1}px 'Orbitron', monospace`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillStyle = '#00f2ff';
+  ctx.shadowBlur = 15; ctx.shadowColor = '#00f2ff';
+  ctx.fillText(`${t.pad12}:${t.pad(t.m)}:${t.pad(t.s)}`, cx, cy);
+  ctx.shadowBlur = 0;
+}
+
+/* ── 19. MOLTEN CORE ──────────────────────────── */
+let moltenParticles = [];
+function initMolten(w, h) {
+  if (moltenParticles.length > 0) return;
+  for (let i = 0; i < 50; i++) {
+    moltenParticles.push({
+      x: Math.random() * w, y: Math.random() * h,
+      s: Math.random() * 2 + 1,
+      v: Math.random() * 0.5 + 0.2,
+      a: Math.random() * Math.PI * 2
+    });
+  }
+}
+
+function drawMolten(ctx, w, h) {
+  const t = getTime();
+  const cx = w / 2, cy = h / 2;
+  const R = Math.min(w, h) * 0.35;
+  initMolten(w, h);
+
+  ctx.fillStyle = '#0a0500';
+  ctx.fillRect(0, 0, w, h);
+
+  // Lava cracks (Static-ish logic but with pulse)
+  const pulse = Math.sin(performance.now() / 1000) * 0.2 + 0.8;
+  ctx.strokeStyle = `rgba(255, 100, 0, ${0.1 * pulse})`;
+  ctx.lineWidth = 20;
+  ctx.beginPath();
+  for (let i = 0; i < 5; i++) {
+    ctx.moveTo(0, h * (i/5));
+    ctx.lineTo(w, h * Math.random());
+  }
+  ctx.stroke();
+
+  // Ash particles
+  ctx.fillStyle = `rgba(255, 150, 50, 0.4)`;
+  for (let p of moltenParticles) {
+    p.y -= p.v;
+    if (p.y < 0) p.y = h;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.s, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  // Dial
+  ctx.beginPath(); ctx.arc(cx, cy, R, 0, Math.PI * 2);
+  ctx.strokeStyle = '#ff4500'; ctx.lineWidth = 4; ctx.stroke();
+  
+  // Glowing hands
+  const hAngle = ((t.h12 + t.m / 60) / 12) * Math.PI * 2 - Math.PI/2;
+  const mAngle = ((t.m + t.s / 60) / 60) * Math.PI * 2 - Math.PI/2;
+  const sAngle = ((t.s + t.ms/1000) / 60) * Math.PI * 2 - Math.PI/2;
+
+  function drawLavaHand(angle, len, width, color) {
+    ctx.lineCap = 'round';
+    ctx.shadowBlur = 15; ctx.shadowColor = color;
+    ctx.strokeStyle = color;
+    ctx.lineWidth = width;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(cx + Math.cos(angle) * len, cy + Math.sin(angle) * len);
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+  }
+
+  drawLavaHand(hAngle, R * 0.5, 8, '#ff4500');
+  drawLavaHand(mAngle, R * 0.8, 5, '#ff8c00');
+  drawLavaHand(sAngle, R * 0.9, 2, '#fff');
+
+  ctx.beginPath(); ctx.arc(cx, cy, 6, 0, Math.PI * 2); ctx.fillStyle = '#fff'; ctx.fill();
+}
+
+/* ── 20. CIRCUIT BOARD ────────────────────────── */
+let circuitNodes = [];
+function initCircuit(w, h) {
+  if (circuitNodes.length > 0) return;
+  for (let i = 0; i < 15; i++) {
+    circuitNodes.push({
+      x: Math.random() * w, y: Math.random() * h,
+      tx: Math.random() * w, ty: Math.random() * h,
+      progress: Math.random()
+    });
+  }
+}
+
+function drawCircuit(ctx, w, h) {
+  const t = getTime();
+  const cx = w / 2, cy = h / 2;
+  initCircuit(w, h);
+
+  ctx.fillStyle = '#001005';
+  ctx.fillRect(0, 0, w, h);
+
+  // Background traces
+  ctx.strokeStyle = 'rgba(0, 255, 100, 0.05)';
+  ctx.lineWidth = 1;
+  for (let i = 0; i < w; i += 40) {
+    ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, h); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(w, i); ctx.stroke();
+  }
+
+  // Pulsing nodes
+  for (let n of circuitNodes) {
+    n.progress += 0.005;
+    if (n.progress > 1) n.progress = 0;
+    
+    const x = lerp(n.x, n.tx, n.progress);
+    const y = lerp(n.y, n.ty, n.progress);
+    
+    ctx.fillStyle = 'rgba(0, 255, 120, 0.3)';
+    ctx.beginPath(); ctx.arc(x, y, 3, 0, Math.PI * 2); ctx.fill();
+    
+    ctx.strokeStyle = 'rgba(0, 255, 120, 0.1)';
+    ctx.beginPath(); ctx.moveTo(n.x, n.y); ctx.lineTo(n.tx, n.ty); ctx.stroke();
+  }
+
+  // CPU Time
+  const sz = Math.min(w, h) * 0.4;
+  ctx.fillStyle = 'rgba(0, 20, 10, 0.8)';
+  ctx.strokeStyle = '#00ff80';
+  ctx.lineWidth = 3;
+  ctx.fillRect(cx - sz/2, cy - sz/2, sz, sz);
+  ctx.strokeRect(cx - sz/2, cy - sz/2, sz, sz);
+
+  // Pins
+  for (let i = 0; i < 4; i++) {
+     const offset = sz/2 + 10;
+     ctx.fillStyle = '#00ff80';
+     ctx.fillRect(cx - sz/2 + (i*sz/4), cy - offset, sz/8, 10);
+     ctx.fillRect(cx - sz/2 + (i*sz/4), cy + offset - 10, sz/8, 10);
+  }
+
+  ctx.font = `bold ${sz * 0.25}px 'Orbitron', monospace`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillStyle = '#00ff80';
+  ctx.shadowBlur = 10; ctx.shadowColor = '#00ff80';
+  ctx.fillText(`${t.pad(t.h)}`, cx, cy - sz * 0.15);
+  ctx.fillText(`${t.pad(t.m)}`, cx, cy + sz * 0.15);
+  ctx.shadowBlur = 0;
+  
+  // Seconds bar
+  ctx.fillStyle = 'rgba(0, 255, 128, 0.2)';
+  ctx.fillRect(cx - sz * 0.4, cy - 2, sz * 0.8, 4);
+  ctx.fillStyle = '#00ff80';
+  ctx.fillRect(cx - sz * 0.4, cy - 2, (sz * 0.8) * (t.s / 60), 4);
+}
+
+/* ── 21. NIGHT CITY ───────────────────────────── */
+function drawCity(ctx, w, h) {
+  const t = getTime();
+  const cx = w / 2, cy = h / 2;
+  const now = performance.now() / 1000;
+
+  // Vaporwave bg
+  const bg = ctx.createLinearGradient(0, 0, 0, h);
+  bg.addColorStop(0, '#2e004d');
+  bg.addColorStop(0.5, '#1a0033');
+  bg.addColorStop(1, '#050010');
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, w, h);
+
+  // Retro Sun
+  const sunR = Math.min(w, h) * 0.35;
+  const sunY = cy - sunR * 0.2;
+  const sunGrd = ctx.createLinearGradient(cx, sunY - sunR, cx, sunY + sunR);
+  sunGrd.addColorStop(0, '#ff00ff');
+  sunGrd.addColorStop(1, '#ffcc00');
+  ctx.fillStyle = sunGrd;
+  ctx.beginPath();
+  ctx.arc(cx, sunY, sunR, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Sun scanlines
+  for (let i = 0; i < 15; i++) {
+    const sy = sunY - sunR + (i * sunR * 0.15);
+    if (sy > sunY - sunR && sy < sunY + sunR) {
+      ctx.fillStyle = '#050010';
+      ctx.fillRect(cx - sunR, sy, sunR * 2, 3);
+    }
+  }
+
+  // Skyline
+  ctx.fillStyle = '#0a001a';
+  for (let i = 0; i < 12; i++) {
+    const bw = w / 10;
+    const bh = (Math.sin(i * 1.5) * 0.5 + 0.5) * (h * 0.3) + 40;
+    ctx.fillRect(i * bw, h - bh, bw + 2, bh);
+    // Window lights
+    if (t.s % 2 === 0) {
+      ctx.fillStyle = '#ff00ff';
+      ctx.fillRect(i * bw + 10, h - bh + 20, 5, 5);
+    }
+    ctx.fillStyle = '#0a001a';
+  }
+
+  // Time display
+  const timeStr = `${t.pad12}:${t.pad(t.m)}:${t.pad(t.s)}`;
+  ctx.font = `600 ${Math.min(w,h)*0.13}px 'Outfit', sans-serif`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillStyle = '#fff';
+  ctx.shadowBlur = 20; ctx.shadowColor = '#ff00ff';
+  ctx.fillText(timeStr, cx, cy);
+  ctx.shadowBlur = 0;
+
+  ctx.font = `400 ${Math.min(w,h)*0.05}px 'Orbitron', sans-serif`;
+  ctx.fillStyle = '#00ffff';
+  ctx.fillText(t.ampm, cx, cy + Math.min(w,h) * 0.12);
+}
+
+/* ── 22. VOID WATCHER ─────────────────────────── */
+let voidParticles = [];
+function initVoid(w, h) {
+  if (voidParticles.length > 0) return;
+  for (let i = 0; i < 40; i++) {
+    voidParticles.push({
+      x: Math.random() * w, y: Math.random() * h,
+      r: Math.random() * 20 + 10,
+      v: Math.random() * 0.2 + 0.1,
+      a: Math.random() * Math.PI * 2
+    });
+  }
+}
+
+function drawVoid(ctx, w, h) {
+  const t = getTime();
+  const cx = w / 2, cy = h / 2;
+  initVoid(w, h);
+
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, w, h);
+
+  // Void mist
+  for (let p of voidParticles) {
+    p.a += 0.01;
+    const dx = Math.cos(p.a) * 20;
+    const dy = Math.sin(p.a) * 20;
+    const grd = ctx.createRadialGradient(p.x + dx, p.y + dy, 0, p.x + dx, p.y + dy, p.r);
+    grd.addColorStop(0, 'rgba(30, 0, 50, 0.4)');
+    grd.addColorStop(1, 'transparent');
+    ctx.fillStyle = grd;
+    ctx.beginPath(); ctx.arc(p.x + dx, p.y + dy, p.r, 0, Math.PI * 2); ctx.fill();
+  }
+
+  // The Eye
+  const eyeR = Math.min(w, h) * 0.22;
+  ctx.fillStyle = '#0a0a0a';
+  ctx.beginPath(); ctx.arc(cx, cy, eyeR, 0, Math.PI * 2); ctx.fill();
+  ctx.strokeStyle = 'rgba(100, 0, 200, 0.2)';
+  ctx.lineWidth = 4; ctx.stroke();
+
+  // Pupil follows seconds
+  const sAngle = ((t.s + t.ms/1000) / 60) * Math.PI * 2 - Math.PI/2;
+  const px = cx + Math.cos(sAngle) * (eyeR * 0.4);
+  const py = cy + Math.sin(sAngle) * (eyeR * 0.4);
+  
+  ctx.fillStyle = '#111';
+  ctx.beginPath(); ctx.arc(px, py, eyeR * 0.5, 0, Math.PI * 2); ctx.fill();
+  
+  // Iris glow
+  const irisGrd = ctx.createRadialGradient(px, py, 0, px, py, eyeR * 0.4);
+  irisGrd.addColorStop(0, '#ff00ff');
+  irisGrd.addColorStop(1, '#330066');
+  ctx.fillStyle = irisGrd;
+  ctx.beginPath(); ctx.arc(px, py, eyeR * 0.35, 0, Math.PI * 2); ctx.fill();
+  
+  // Real Pupil
+  ctx.fillStyle = '#000';
+  ctx.beginPath(); ctx.arc(px, py, eyeR * 0.15, 0, Math.PI * 2); ctx.fill();
+
+  // Time floating
+  ctx.font = `800 ${Math.min(w,h)*0.12}px 'Orbitron', sans-serif`;
+  ctx.textAlign = 'center';
+  ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+  ctx.fillText(`${t.pad12}:${t.pad(t.m)}`, cx, cy + eyeR * 1.5);
+}
+
+/* ── 23. DEEP SEA ─────────────────────────────── */
+let seaRipples = [];
+function initSea(w, h) {
+  if (seaRipples.length > 0) return;
+  for (let i = 0; i < 5; i++) {
+    seaRipples.push({
+      x: Math.random() * w, y: Math.random() * h,
+      r: 0, v: Math.random() * 1 + 0.5, a: Math.random() * 0.5
+    });
+  }
+}
+
+function drawSea(ctx, w, h) {
+  const t = getTime();
+  const cx = w / 2, cy = h / 2;
+  const R = Math.min(w, h) * 0.35;
+  initSea(w, h);
+
+  const bg = ctx.createLinearGradient(0, 0, 0, h);
+  bg.addColorStop(0, '#00081a');
+  bg.addColorStop(1, '#001a33');
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, w, h);
+
+  // Bioluminescent ripples
+  for (let r of seaRipples) {
+    r.r += r.v;
+    if (r.r > 200) { r.r = 0; r.x = Math.random() * w; r.y = Math.random() * h; }
+    ctx.strokeStyle = `rgba(0, 255, 255, ${0.1 * (1 - r.r/200)})`;
+    ctx.beginPath(); ctx.arc(r.x, r.y, r.r, 0, Math.PI * 2); ctx.stroke();
+  }
+
+  // Dial
+  ctx.beginPath(); ctx.arc(cx, cy, R, 0, Math.PI * 2);
+  ctx.strokeStyle = 'rgba(0, 255, 255, 0.2)'; ctx.lineWidth = 10; ctx.stroke();
+  
+  // Glow
+  const glow = ctx.createRadialGradient(cx, cy, R*0.8, cx, cy, R*1.2);
+  glow.addColorStop(0, 'rgba(0, 255, 255, 0.05)');
+  glow.addColorStop(1, 'transparent');
+  ctx.fillStyle = glow;
+  ctx.beginPath(); ctx.arc(cx, cy, R*1.2, 0, Math.PI*2); ctx.fill();
+
+  // Hands
+  const hAngle = ((t.h12 + t.m/60) / 12) * Math.PI * 2 - Math.PI/2;
+  const mAngle = ((t.m + t.s/60) / 60) * Math.PI * 2 - Math.PI/2;
+  const sAngle = ((t.s + t.ms/1000) / 60) * Math.PI * 2 - Math.PI/2;
+
+  function drawSeaHand(angle, len, width, color) {
+    ctx.lineCap = 'round';
+    ctx.strokeStyle = color;
+    ctx.lineWidth = width;
+    ctx.shadowBlur = 10; ctx.shadowColor = color;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(cx + Math.cos(angle) * len, cy + Math.sin(angle) * len);
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+  }
+
+  drawSeaHand(hAngle, R * 0.6, 6, '#4ade80');
+  drawSeaHand(mAngle, R * 0.85, 4, '#22d3ee');
+  drawSeaHand(sAngle, R * 0.95, 2, '#fff');
+}
+
+/* ── 24. INFINITY LOOP ────────────────────────── */
+let infinityStep = 0;
+function drawInfinity(ctx, w, h) {
+  const t = getTime();
+  const cx = w / 2, cy = h / 2;
+  infinityStep += 0.01;
+
+  ctx.fillStyle = '#050510';
+  ctx.fillRect(0, 0, w, h);
+
+  const maxLayers = 8;
+  for (let i = 0; i < maxLayers; i++) {
+    const layer = (i + infinityStep) % maxLayers;
+    const scale = Math.pow(layer / maxLayers, 2);
+    const alpha = layer / maxLayers;
+    const size = Math.min(w, h) * 0.8 * scale;
+    
+    ctx.strokeStyle = `hsla(${260 + i*20}, 80%, 60%, ${alpha})`;
+    ctx.lineWidth = 2 * scale + 1;
+    ctx.strokeRect(cx - size/2, cy - size/2, size, size);
+  }
+
+  // Central Time
+  const timeStr = `${t.pad12}:${t.pad(t.m)}:${t.pad(t.s)}`;
+  ctx.font = `bold ${Math.min(w,h)*0.12}px 'Orbitron', sans-serif`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillStyle = '#fff';
+  ctx.shadowBlur = 25; ctx.shadowColor = '#c084fc';
+  ctx.fillText(timeStr, cx, cy);
+  ctx.shadowBlur = 0;
 }
 
 function buildStandaloneHTML(theme) {
