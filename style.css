@@ -429,6 +429,23 @@ section {
 .void-badge    { background: rgba(255,255,255,0.05); color: #94a3b8;        border: 1px solid rgba(255,255,255,0.2); }
 .cyan-badge    { background: rgba(34,211,238,0.12); color: #22d3ee;         border: 1px solid rgba(34,211,238,0.3); }
 
+.live-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  background: currentColor;
+  border-radius: 50%;
+  margin-right: 6px;
+  vertical-align: middle;
+  box-shadow: 0 0 8px currentColor;
+  animation: livePulse 1.5s ease-in-out infinite;
+}
+
+@keyframes livePulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.4); opacity: 0.5; }
+}
+
 .card-info h3 {
   font-family: var(--font-out);
   font-size: 1.15rem;
@@ -783,3 +800,9 @@ section {
 .clock-card:nth-child(22) { animation-delay: 1.10s; }
 .clock-card:nth-child(23) { animation-delay: 1.15s; }
 .clock-card:nth-child(24) { animation-delay: 1.20s; }
+.clock-card:nth-child(25) { animation-delay: 1.25s; }
+.clock-card:nth-child(26) { animation-delay: 1.30s; }
+.clock-card:nth-child(27) { animation-delay: 1.35s; }
+.clock-card:nth-child(28) { animation-delay: 1.40s; }
+.clock-card:nth-child(29) { animation-delay: 1.45s; }
+.clock-card:nth-child(30) { animation-delay: 1.50s; }

@@ -32,6 +32,21 @@ function hsl(h, s, l) { return `hsl(${h},${s}%,${l}%)`; }
 let heroStarData = null;
 
 // ─────────────────────────────────────────────
+// PERFORMANCE ENGINE
+// ─────────────────────────────────────────────
+let visibleThemes   = new Set();
+let frameCount      = 0;
+const PREVIEW_FPS   = 3; // Render every 3rd frame (~20fps)
+
+const visibilityObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    const theme = entry.target.dataset.theme;
+    if (entry.isIntersecting) visibleThemes.add(theme);
+    else visibleThemes.delete(theme);
+  });
+}, { threshold: 0.1 });
+
+// ─────────────────────────────────────────────
 // HERO STARS BACKGROUND
 // ─────────────────────────────────────────────
 function initHeroStars() {
@@ -1424,7 +1439,13 @@ const CLOCKS = {
   city:    { fn: drawCity,    name: 'Synthwave Nights' },
   void:    { fn: drawVoid,    name: 'The Watcher' },
   sea:     { fn: drawSea,     name: 'Luminescent Abyss' },
-  infinity:{ fn: drawInfinity, name: 'Infinity Loop' }
+  infinity:{ fn: drawInfinity, name: 'Infinity Loop' },
+  prism:   { fn: drawPrism,   name: 'Prism Core' },
+  plasma:  { fn: drawPlasma,  name: 'Plasma Storm' },
+  stardust:{ fn: drawStardust, name: 'Star Dust' },
+  paper:   { fn: drawPaper,   name: 'Paper Cut' },
+  tokyo:   { fn: drawTokyo,   name: 'Glitch Tokyo' },
+  arctic:  { fn: drawArctic,  name: 'Arctic Frost' }
 };
 
 // ─────────────────────────────────────────────
@@ -1434,16 +1455,29 @@ function initPreviews() {
   Object.keys(CLOCKS).forEach((key) => {
     const canvas = document.getElementById(`preview-${key}`);
     if (!canvas) return;
+
+    // Adjust resolution
     const parent = canvas.parentElement;
     const W = parent.clientWidth  || 280;
     const H = parent.clientHeight || 175;
     canvas.width  = W;
     canvas.height = H;
+
+    // Observe for performance optimization
+    const card = canvas.closest('.clock-card');
+    if (card) {
+      card.dataset.theme = key; 
+      visibilityObserver.observe(card);
+    }
   });
 }
 
 function renderPreviews() {
-  Object.keys(CLOCKS).forEach((key) => {
+  frameCount++;
+  // Performance optimization: Only render visible cards and at reduced FPS
+  if (frameCount % PREVIEW_FPS !== 0) return;
+
+  visibleThemes.forEach((key) => {
     const canvas = document.getElementById(`preview-${key}`);
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
@@ -1544,6 +1578,12 @@ const THEME_GLOBALS = {
   void:    `let voidParticles = [];`,
   sea:     `let seaRipples = [];`,
   infinity: `let infinityStep = 0;`,
+  stardust: `let stardustArr = [];`,
+  arctic: `let snowArr = [];`,
+  prism: ``,
+  plasma: ``,
+  paper: ``,
+  tokyo: ``,
 };
 
 // Map theme → which helper init functions it needs (by reference)
@@ -1557,6 +1597,8 @@ function getThemeHelpers(theme) {
     circuit: typeof initCircuit      === 'function' ? [initCircuit]      : [],
     void:    typeof initVoid         === 'function' ? [initVoid]         : [],
     sea:     typeof initSea          === 'function' ? [initSea]          : [],
+    stardust: typeof initStardust    === 'function' ? [initStardust]    : [],
+    arctic:   typeof initSnow        === 'function' ? [initSnow]        : [],
   };
   return (map[theme] || []).map(fn => fn.toString()).join('\n\n');
 }
@@ -2159,6 +2201,292 @@ function drawInfinity(ctx, w, h) {
   ctx.shadowBlur = 25; ctx.shadowColor = '#c084fc';
   ctx.fillText(timeStr, cx, cy);
   ctx.shadowBlur = 0;
+}
+
+/* ── 25. PRISM CORE ───────────────────────────── */
+function drawPrism(ctx, w, h) {
+  const t = getTime();
+  const cx = w / 2, cy = h / 2;
+  const now = performance.now() / 1000;
+  const R = Math.min(w, h) * 0.35;
+
+  ctx.fillStyle = '#05020a';
+  ctx.fillRect(0, 0, w, h);
+
+  // Background light beams
+  for (let i = 0; i < 6; i++) {
+    const angle = i * Math.PI / 3 + now * 0.2;
+    const grd = ctx.createLinearGradient(cx, cy, cx + Math.cos(angle) * w, cy + Math.sin(angle) * w);
+    grd.addColorStop(0, `hsla(${280 + i * 20}, 100%, 50%, 0.1)`);
+    grd.addColorStop(1, 'transparent');
+    ctx.fillStyle = grd;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(cx + Math.cos(angle - 0.2) * w, cy + Math.sin(angle - 0.2) * w);
+    ctx.lineTo(cx + Math.cos(angle + 0.2) * w, cy + Math.sin(angle + 0.2) * w);
+    ctx.fill();
+  }
+
+  // Floating crystal (Prism)
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.rotate(now * 0.5);
+  for (let i = 0; i < 3; i++) {
+    ctx.rotate(Math.PI * 2 / 3);
+    const pR = R * (0.8 + Math.sin(now * 2 + i) * 0.1);
+    const grd = ctx.createLinearGradient(0, -pR, 0, pR);
+    grd.addColorStop(0, '#fff');
+    grd.addColorStop(0.5, '#7c6dfa');
+    grd.addColorStop(1, '#00f2ff');
+    ctx.fillStyle = grd;
+    ctx.globalAlpha = 0.6;
+    ctx.beginPath();
+    ctx.moveTo(0, -pR);
+    ctx.lineTo(pR * 0.8, pR * 0.5);
+    ctx.lineTo(-pR * 0.8, pR * 0.5);
+    ctx.closePath();
+    ctx.fill();
+  }
+  ctx.restore();
+
+  // Time String
+  const timeStr = `${t.pad12}:${t.pad(t.m)}:${t.pad(t.s)}`;
+  ctx.font = `800 ${Math.min(w,h) * 0.12}px 'Outfit', sans-serif`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillStyle = '#fff';
+  ctx.shadowBlur = 30; ctx.shadowColor = '#7c6dfa';
+  ctx.fillText(timeStr, cx, cy);
+  ctx.shadowBlur = 0;
+}
+
+/* ── 26. PLASMA STORM ─────────────────────────── */
+function drawPlasma(ctx, w, h) {
+  const t = getTime();
+  const cx = w / 2, cy = h / 2;
+  const now = performance.now() / 1000;
+
+  ctx.fillStyle = '#010005';
+  ctx.fillRect(0, 0, w, h);
+
+  // Plasma blobs
+  for (let i = 0; i < 5; i++) {
+    const x = cx + Math.sin(now * 0.7 + i) * w * 0.3;
+    const y = cy + Math.cos(now * 0.8 + i) * h * 0.3;
+    const r = Math.min(w, h) * (0.4 + Math.sin(now + i) * 0.1);
+    const grd = ctx.createRadialGradient(x, y, 0, x, y, r);
+    grd.addColorStop(0, `hsla(${240 + i * 30}, 100%, 50%, 0.4)`);
+    grd.addColorStop(1, 'transparent');
+    ctx.globalCompositeOperation = 'screen';
+    ctx.fillStyle = grd;
+    ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill();
+  }
+  ctx.globalCompositeOperation = 'source-over';
+
+  // Lightning lines
+  ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+  ctx.lineWidth = 1;
+  for (let i = 0; i < 10; i++) {
+    let lx = cx, ly = cy;
+    ctx.beginPath();
+    ctx.moveTo(lx, ly);
+    for (let j = 0; j < 5; j++) {
+      lx += Math.cos(now + i + j) * 40;
+      ly += Math.sin(now * 1.2 + i + j) * 40;
+      ctx.lineTo(lx, ly);
+    }
+    ctx.stroke();
+  }
+
+  // Digital Time
+  const timeStr = `${t.pad(t.h)} : ${t.pad(t.m)} : ${t.pad(t.s)}`;
+  ctx.font = `600 ${Math.min(w,h) * 0.1}px 'Orbitron', monospace`;
+  ctx.textAlign = 'center';
+  ctx.fillStyle = '#fff';
+  ctx.shadowBlur = 20; ctx.shadowColor = '#c084fc';
+  ctx.fillText(timeStr, cx, cy);
+  ctx.shadowBlur = 0;
+}
+
+/* ── 27. STAR DUST ────────────────────────────── */
+let stardustArr = [];
+function initStardust(w, h) {
+  if (stardustArr.length > 0) return;
+  for (let i = 0; i < 200; i++) {
+    stardustArr.push({
+      x: Math.random() * w, y: Math.random() * h,
+      s: Math.random() * 1.5 + 0.5,
+      v: Math.random() * 0.3 + 0.1,
+      h: Math.random() * 40 + 200
+    });
+  }
+}
+function drawStardust(ctx, w, h) {
+  const t = getTime();
+  const cx = w / 2, cy = h / 2;
+  initStardust(w, h);
+
+  ctx.fillStyle = '#02020a';
+  ctx.fillRect(0, 0, w, h);
+
+  for (let p of stardustArr) {
+    p.x += p.v; p.y += p.v * 0.5;
+    if (p.x > w) p.x = 0; if (p.y > h) p.y = 0;
+    ctx.fillStyle = `hsla(${p.h}, 100%, 80%, ${0.3 + Math.random() * 0.4})`;
+    ctx.beginPath(); ctx.arc(p.x, p.y, p.s, 0, Math.PI * 2); ctx.fill();
+  }
+
+  const timeStr = `${t.pad12}:${t.pad(t.m)}:${t.pad(t.s)}`;
+  ctx.font = `200 ${Math.min(w,h) * 0.15}px 'Outfit', sans-serif`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+  ctx.shadowBlur = 40; ctx.shadowColor = '#fff';
+  ctx.fillText(timeStr, cx, cy);
+  ctx.shadowBlur = 0;
+}
+
+/* ── 28. PAPER CUT ────────────────────────────── */
+function drawPaper(ctx, w, h) {
+  const t = getTime();
+  const cx = w / 2, cy = h / 2;
+  const R = Math.min(w, h) * 0.35;
+
+  ctx.fillStyle = '#f0f0f0';
+  ctx.fillRect(0, 0, w, h);
+
+  // Background layers
+  for (let i = 4; i > 0; i--) {
+    ctx.fillStyle = i % 2 === 0 ? '#e0e0e0' : '#d0d0d0';
+    ctx.shadowBlur = 15; ctx.shadowColor = 'rgba(0,0,0,0.1)';
+    ctx.beginPath();
+    ctx.arc(cx, cy, R * (1 + i * 0.1), 0, Math.PI * 2);
+    ctx.fill();
+  }
+  ctx.shadowBlur = 0;
+
+  // Clock plate
+  ctx.fillStyle = '#fff';
+  ctx.beginPath(); ctx.arc(cx, cy, R, 0, Math.PI * 2); ctx.fill();
+
+  // Hands
+  const hAngle = ((t.h12 + t.m/60) / 12) * Math.PI * 2 - Math.PI/2;
+  const mAngle = ((t.m + t.s/60) / 60) * Math.PI * 2 - Math.PI/2;
+  const sAngle = ((t.s + t.ms/1000) / 60) * Math.PI * 2 - Math.PI/2;
+
+  ctx.shadowBlur = 8; ctx.shadowColor = 'rgba(0,0,0,0.2)';
+  drawHand(ctx, cx, cy, hAngle + Math.PI/2, R * 0.5, '#444', 8, R * 0.1);
+  drawHand(ctx, cx, cy, mAngle + Math.PI/2, R * 0.8, '#666', 5, R * 0.1);
+  drawHand(ctx, cx, cy, sAngle + Math.PI/2, R * 0.9, '#ff5555', 2, R * 0.2);
+  ctx.shadowBlur = 0;
+
+  ctx.font = `bold ${Math.min(w,h) * 0.05}px 'Outfit', sans-serif`;
+  ctx.fillStyle = '#999';
+  ctx.textAlign = 'center';
+  ctx.fillText(t.ampm, cx, cy + R * 0.4);
+}
+
+/* ── 29. GLITCH TOKYO ──────────────────────────── */
+function drawTokyo(ctx, w, h) {
+  const t = getTime();
+  const cx = w / 2, cy = h / 2;
+  const now = performance.now() / 1000;
+
+  ctx.fillStyle = '#050010';
+  ctx.fillRect(0, 0, w, h);
+
+  // Background neon shapes
+  ctx.strokeStyle = '#ff00ff';
+  ctx.lineWidth = 2;
+  for (let i = 0; i < 3; i++) {
+    const x = cx + (i - 1) * 200;
+    ctx.strokeRect(x - 50, cy - 100, 100, 200);
+  }
+
+  // Kanji markers
+  ctx.font = `600 ${Math.min(w,h) * 0.08}px serif`;
+  ctx.fillStyle = '#00ffff';
+  ctx.fillText('時', cx + 150, cy);
+  ctx.fillText('分', cx + 220, cy);
+
+  const timeStr = `${t.pad12}:${t.pad(t.m)}:${t.pad(t.s)}`;
+  ctx.font = `900 ${Math.min(w,h) * 0.14}px 'Orbitron', monospace`;
+  ctx.textAlign = 'center';
+
+  // Extreme Glitch
+  if (Math.random() > 0.9) {
+    ctx.fillStyle = '#ff00ff';
+    ctx.fillText(timeStr, cx + 10, cy - 5);
+    ctx.fillStyle = '#00ffff';
+    ctx.fillText(timeStr, cx - 10, cy + 5);
+  }
+
+  ctx.fillStyle = '#fff';
+  ctx.shadowBlur = 20; ctx.shadowColor = '#ff00ff';
+  ctx.fillText(timeStr, cx, cy);
+  ctx.shadowBlur = 0;
+
+  // Scanning bar
+  ctx.fillStyle = 'rgba(255, 0, 255, 0.05)';
+  ctx.fillRect(0, (now * 200) % h, w, 40);
+}
+
+/* ── 30. ARCTIC FROST ──────────────────────────── */
+let snowArr = [];
+function initSnow(w, h) {
+  if (snowArr.length > 0) return;
+  for (let i = 0; i < 100; i++) {
+    snowArr.push({
+      x: Math.random() * w, y: Math.random() * h,
+      s: Math.random() * 3 + 1,
+      v: Math.random() * 1 + 0.5,
+      o: Math.random() * Math.PI * 2
+    });
+  }
+}
+function drawArctic(ctx, w, h) {
+  const t = getTime();
+  const cx = w / 2, cy = h / 2;
+  initSnow(w, h);
+
+  const bg = ctx.createLinearGradient(0, 0, 0, h);
+  bg.addColorStop(0, '#e0f7ff');
+  bg.addColorStop(1, '#a0d8ef');
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, w, h);
+
+  // Snow
+  ctx.fillStyle = '#fff';
+  for (let s of snowArr) {
+    s.y += s.v; s.x += Math.sin(s.o + s.y*0.01) * 0.5;
+    if (s.y > h) s.y = -10;
+    ctx.beginPath(); ctx.arc(s.x, s.y, s.s, 0, Math.PI * 2); ctx.fill();
+  }
+
+  // Ice crystals
+  ctx.save();
+  ctx.globalAlpha = 0.3;
+  ctx.strokeStyle = '#fff';
+  ctx.lineWidth = 2;
+  for (let i = 0; i < 6; i++) {
+    const a = i * Math.PI / 3;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(cx + Math.cos(a) * 150, cy + Math.sin(a) * 150);
+    ctx.stroke();
+  }
+  ctx.restore();
+
+  const timeStr = `${t.pad12}:${t.pad(t.m)}:${t.pad(t.s)}`;
+  ctx.font = `600 ${Math.min(w,h) * 0.12}px 'Outfit', sans-serif`;
+  ctx.textAlign = 'center';
+  ctx.fillStyle = '#2c3e50';
+  ctx.shadowBlur = 10; ctx.shadowColor = 'rgba(255,255,255,0.8)';
+  ctx.fillText(timeStr, cx, cy);
+  ctx.shadowBlur = 0;
+
+  ctx.font = `400 ${Math.min(w,h) * 0.04}px 'Outfit', sans-serif`;
+  ctx.fillText(`${t.ampm} \u2022 ARCTIC SYNC`, cx, cy + Math.min(w,h) * 0.12);
 }
 
 function buildStandaloneHTML(theme) {
