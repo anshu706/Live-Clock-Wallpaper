@@ -428,6 +428,9 @@ section {
 .city-badge    { background: rgba(192,132,252,0.12); color: #c084fc;        border: 1px solid rgba(192,132,252,0.3); }
 .void-badge    { background: rgba(255,255,255,0.05); color: #94a3b8;        border: 1px solid rgba(255,255,255,0.2); }
 .cyan-badge    { background: rgba(34,211,238,0.12); color: #22d3ee;         border: 1px solid rgba(34,211,238,0.3); }
+.gold-badge    { background: rgba(255,215,0,0.12);  color: #ffd700;         border: 1px solid rgba(255,215,0,0.3); }
+.fluid-badge   { background: rgba(34,211,238,0.12); color: #22d3ee;         border: 1px solid rgba(34,211,238,0.3); }
+.bloom-badge   { background: rgba(244,114,182,0.12); color: #f472b6;        border: 1px solid rgba(244,114,182,0.3); }
 
 .live-dot {
   display: inline-block;

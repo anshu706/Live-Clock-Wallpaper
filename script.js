@@ -1445,7 +1445,10 @@ const CLOCKS = {
   stardust:{ fn: drawStardust, name: 'Star Dust' },
   paper:   { fn: drawPaper,   name: 'Paper Cut' },
   tokyo:   { fn: drawTokyo,   name: 'Glitch Tokyo' },
-  arctic:  { fn: drawArctic,  name: 'Arctic Frost' }
+  arctic:  { fn: drawArctic,  name: 'Arctic Frost' },
+  gold:    { fn: drawGold,    name: 'Golden Hour' },
+  nebula:  { fn: drawFluid,   name: 'Nebula Bloom' },
+  bloom:   { fn: drawBloom,   name: 'Geometric Bloom' }
 };
 
 // ─────────────────────────────────────────────
@@ -1584,6 +1587,9 @@ const THEME_GLOBALS = {
   plasma: ``,
   paper: ``,
   tokyo: ``,
+  gold: ``,
+  nebula: `let fluidBlobs = [];`,
+  bloom: ``,
 };
 
 // Map theme → which helper init functions it needs (by reference)
@@ -1599,6 +1605,8 @@ function getThemeHelpers(theme) {
     sea:     typeof initSea          === 'function' ? [initSea]          : [],
     stardust: typeof initStardust    === 'function' ? [initStardust]    : [],
     arctic:   typeof initSnow        === 'function' ? [initSnow]        : [],
+    nebula:   typeof initFluid       === 'function' ? [initFluid]       : [],
+  };
   };
   return (map[theme] || []).map(fn => fn.toString()).join('\n\n');
 }
@@ -2487,6 +2495,168 @@ function drawArctic(ctx, w, h) {
 
   ctx.font = `400 ${Math.min(w,h) * 0.04}px 'Outfit', sans-serif`;
   ctx.fillText(`${t.ampm} \u2022 ARCTIC SYNC`, cx, cy + Math.min(w,h) * 0.12);
+}
+
+/* ── 31. GOLDEN HOUR ───────────────────────────── */
+function drawGold(ctx, w, h) {
+  const t = getTime();
+  const cx = w / 2, cy = h / 2;
+  const R = Math.min(w, h) * 0.35;
+  const now = performance.now() / 1000;
+
+  // Premium marble/warm background
+  const bg = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.max(w,h));
+  bg.addColorStop(0, '#fffcf5');
+  bg.addColorStop(0.7, '#f7f0e0');
+  bg.addColorStop(1, '#ebe0cc');
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, w, h);
+
+  // Subtle marble veins
+  ctx.strokeStyle = 'rgba(184, 134, 11, 0.04)';
+  ctx.lineWidth = 1;
+  for(let i=0; i<6; i++) {
+    ctx.beginPath();
+    ctx.moveTo(w * (i/6), 0);
+    ctx.bezierCurveTo(w*(i/6 + 0.1), h*0.3, w*(i/6 - 0.1), h*0.7, w*(i/6), h);
+    ctx.stroke();
+  }
+
+  // Golden Hour Glow
+  const glow = ctx.createRadialGradient(cx - R, cy - R, 0, cx, cy, R*2);
+  glow.addColorStop(0, 'rgba(255, 215, 0, 0.08)');
+  glow.addColorStop(1, 'transparent');
+  ctx.fillStyle = glow;
+  ctx.fillRect(0,0,w,h);
+
+  // Metal Rim
+  ctx.beginPath(); ctx.arc(cx, cy, R, 0, Math.PI * 2);
+  const rim = ctx.createLinearGradient(cx-R, cy-R, cx+R, cy+R);
+  rim.addColorStop(0, '#ffd700'); rim.addColorStop(0.5, '#b8860b'); rim.addColorStop(1, '#ffeb73');
+  ctx.strokeStyle = rim; ctx.lineWidth = 8; ctx.stroke();
+
+  // Tick Marks
+  for (let i = 0; i < 60; i++) {
+    const a = (i/60)*Math.PI*2 - Math.PI/2;
+    const isH = i % 5 === 0;
+    const ir = R * (isH ? 0.8 : 0.92), or = R * 0.98;
+    ctx.beginPath(); ctx.moveTo(cx + Math.cos(a)*ir, cy + Math.sin(a)*ir); ctx.lineTo(cx + Math.cos(a)*or, cy + Math.sin(a)*or);
+    ctx.strokeStyle = isH ? '#b8860b' : 'rgba(184,134,11,0.3)';
+    ctx.lineWidth = isH ? 3 : 1; ctx.stroke();
+  }
+
+  // Hands with soft shadows
+  ctx.shadowBlur = 15; ctx.shadowColor = 'rgba(0,0,0,0.15)';
+  const hA = ((t.h12 + t.m/60)/12)*Math.PI*2 - Math.PI/2;
+  const mA = ((t.m + t.s/60)/60)*Math.PI*2 - Math.PI/2;
+  const sA = ((t.s + t.ms/1000)/60)*Math.PI*2 - Math.PI/2;
+
+  drawHand(ctx, cx, cy, hA + Math.PI/2, R*0.5, '#443300', 6, R*0.1);
+  drawHand(ctx, cx, cy, mA + Math.PI/2, R*0.8, '#554411', 4, R*0.1);
+  drawHand(ctx, cx, cy, sA + Math.PI/2, R*0.9, '#d4af37', 2, R*0.2);
+  ctx.shadowBlur = 0;
+
+  // Center Cap
+  ctx.beginPath(); ctx.arc(cx, cy, 6, 0, Math.PI*2); ctx.fillStyle = '#b8860b'; ctx.fill();
+}
+
+/* ── 32. NEBULA BLOOM ───────────────────────────── */
+let fluidBlobs = [];
+function initFluid(w, h) {
+  if (fluidBlobs.length > 0) return;
+  for (let i = 0; i < 6; i++) {
+    fluidBlobs.push({
+      x: Math.random()*w, y: Math.random()*h,
+      r: Math.random()*200 + 150,
+      vx: (Math.random()-0.5)*0.8, vy: (Math.random()-0.5)*0.8,
+      hue: Math.random()*60 + 180
+    });
+  }
+}
+function drawFluid(ctx, w, h) {
+  const t = getTime();
+  const cx = w / 2, cy = h / 2;
+  initFluid(w, h);
+
+  ctx.fillStyle = '#050a15';
+  ctx.fillRect(0, 0, w, h);
+
+  ctx.globalCompositeOperation = 'screen';
+  for (let b of fluidBlobs) {
+    b.x += b.vx; b.y += b.vy;
+    if (b.x < 0 || b.x > w) b.vx *= -1;
+    if (b.y < 0 || b.y > h) b.vy *= -1;
+
+    const grd = ctx.createRadialGradient(b.x, b.y, 0, b.x, b.y, b.r);
+    grd.addColorStop(0, `hsla(${b.hue}, 80%, 50%, 0.15)`);
+    grd.addColorStop(1, 'transparent');
+    ctx.fillStyle = grd;
+    ctx.beginPath(); ctx.arc(b.x, b.y, b.r, 0, Math.PI*2); ctx.fill();
+  }
+  ctx.globalCompositeOperation = 'source-over';
+
+  const timeStr = `${t.pad12}:${t.pad(t.m)}:${t.pad(t.s)}`;
+  ctx.font = `700 ${Math.min(w,h)*0.14}px 'Outfit', sans-serif`;
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillStyle = '#fff';
+  ctx.shadowBlur = 40; ctx.shadowColor = 'rgba(34,211,238,0.5)';
+  ctx.fillText(timeStr, cx, cy);
+  ctx.shadowBlur = 0;
+  
+  ctx.font = `500 ${Math.min(w,h)*0.045}px 'Orbitron', sans-serif`;
+  ctx.fillStyle = 'rgba(34,211,238,0.7)';
+  ctx.fillText(t.ampm + ' \u2022 NEBULA ENGINE', cx, cy + Math.min(w,h)*0.12);
+}
+
+/* ── 33. GEOMETRIC BLOOM ────────────────────────── */
+function drawBloom(ctx, w, h) {
+  const t = getTime();
+  const cx = w / 2, cy = h / 2;
+  const now = performance.now() / 1000;
+  const R = Math.min(w, h) * 0.35;
+
+  ctx.fillStyle = '#0a0a1a';
+  ctx.fillRect(0, 0, w, h);
+
+  // Background stars
+  ctx.fillStyle = 'rgba(255,255,255,0.1)';
+  for(let i=0; i<50; i++) {
+    const sx = (Math.sin(i*123)*0.5+0.5)*w, sy = (Math.cos(i*456)*0.5+0.5)*h;
+    ctx.beginPath(); ctx.arc(sx, sy, 1, 0, Math.PI*2); ctx.fill();
+  }
+
+  // Geometric flower
+  const petals = 12;
+  const pulse = Math.sin(now * 2.5) * 0.05 + 1;
+  const rotateS = t.s + t.ms/1000;
+
+  for (let layer = 3; layer > 0; layer--) {
+    const lR = R * (layer/3) * pulse;
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.rotate(rotateS * (layer % 2 === 0 ? 0.2 : -0.2));
+    
+    for (let i = 0; i < petals; i++) {
+      const a = (i/petals)*Math.PI*2;
+      ctx.beginPath();
+      ctx.moveTo(0, 0);
+      ctx.quadraticCurveTo(Math.cos(a-0.3)*lR*1.2, Math.sin(a-0.3)*lR*1.2, Math.cos(a)*lR, Math.sin(a)*lR);
+      ctx.quadraticCurveTo(Math.cos(a+0.3)*lR*1.2, Math.sin(a+0.3)*lR*1.2, 0, 0);
+      ctx.fillStyle = `hsla(${280 + layer*30}, 70%, 60%, ${0.2 + layer*0.1})`;
+      ctx.fill();
+      ctx.strokeStyle = `hsla(${280 + layer*30}, 80%, 80%, 0.4)`;
+      ctx.lineWidth = 1; ctx.stroke();
+    }
+    ctx.restore();
+  }
+
+  const timeStr = `${t.pad12}:${t.pad(t.m)}:${t.pad(t.s)}`;
+  ctx.font = `800 ${Math.min(w,h)*0.1}px 'Orbitron', sans-serif`;
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillStyle = '#fff';
+  ctx.shadowBlur = 30; ctx.shadowColor = '#c084fc';
+  ctx.fillText(timeStr, cx, cy);
+  ctx.shadowBlur = 0;
 }
 
 function buildStandaloneHTML(theme) {
