@@ -1615,7 +1615,6 @@ function getThemeHelpers(theme) {
     arctic:   typeof initSnow        === 'function' ? [initSnow]        : [],
     nebula:   typeof initFluid       === 'function' ? [initFluid]       : [],
   };
-  };
   return (map[theme] || []).map(fn => fn.toString()).join('\n\n');
 }
 
