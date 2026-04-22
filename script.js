@@ -1451,7 +1451,10 @@ const CLOCKS = {
   bloom:   { fn: drawBloom,   name: 'Geometric Bloom' },
   synthwave: { fn: drawSynthwave, name: 'Synthwave Sunset' },
   vortex:  { fn: drawVortex,  name: 'Quantum Vortex' },
-  forest:  { fn: drawForest,  name: 'Emerald Forest' }
+  forest:  { fn: drawForest,  name: 'Emerald Forest' },
+  quantum:   { fn: drawQuantum,  name: 'Quantum Pulse' },
+  robotics:  { fn: drawRobotics, name: 'Mecha Core' },
+  horizon:   { fn: drawEventHorizon, name: 'Event Horizon' }
 };
 
 // ─────────────────────────────────────────────
@@ -1596,6 +1599,9 @@ const THEME_GLOBALS = {
   synthwave: `let synthwaveOffset = 0;`,
   vortex: `let vortexParticles = [];`,
   forest: `let leafShapes = [];`,
+  quantum:   `let quantumFlakes = [];`,
+  robotics:  `let roboticsSensors = [];`,
+  horizon:   `let singularityParticles = [];`
 };
 
 // Map theme → which helper init functions it needs (by reference)
@@ -1614,6 +1620,9 @@ function getThemeHelpers(theme) {
     stardust: typeof initStardust    === 'function' ? [initStardust]    : [],
     arctic:   typeof initSnow        === 'function' ? [initSnow]        : [],
     nebula:   typeof initFluid       === 'function' ? [initFluid]       : [],
+    quantum:  typeof initQuantum     === 'function' ? [initQuantum]     : [],
+    robotics: typeof initRobotics    === 'function' ? [initRobotics]    : [],
+    horizon:  typeof initEventHorizon === 'function' ? [initEventHorizon] : [],
   };
   return (map[theme] || []).map(fn => fn.toString()).join('\n\n');
 }
@@ -2895,6 +2904,315 @@ function drawForest(ctx, w, h) {
   ctx.textAlign = 'center';
   ctx.fillStyle = 'rgba(74, 222, 128, 0.6)';
   ctx.fillText(`${t.pad12}:${t.pad(t.m)}`, cx, cy + R * 0.2);
+}
+
+/* ── 37. SCHRÖDINGER'S PULSE (QUANTUM) ─────── */
+let quantumFlakes = [];
+function initQuantum(w, h) {
+  if (quantumFlakes.length > 0) return;
+  for (let i = 0; i < 40; i++) {
+    quantumFlakes.push({
+      x: Math.random() * w,
+      y: Math.random() * h,
+      size: Math.random() * 2 + 1,
+      v: Math.random() * 0.5 + 0.2,
+      phase: Math.random() * Math.PI * 2,
+      active: Math.random() > 0.5
+    });
+  }
+}
+
+function drawQuantum(ctx, w, h) {
+  const t = getTime();
+  const cx = w/2, cy = h/2;
+  initQuantum(w, h);
+
+  ctx.fillStyle = '#05030a';
+  ctx.fillRect(0, 0, w, h);
+
+  // Probability clouds
+  const time = Date.now() / 1000;
+  ctx.save();
+  ctx.globalCompositeOperation = 'screen';
+  for(let i=0; i<3; i++) {
+    const shift = i * 2;
+    const grad = ctx.createRadialGradient(cx + Math.cos(time + shift)*30, cy + Math.sin(time*0.8 + shift)*20, 0, cx, cy, w*0.6);
+    grad.addColorStop(0, i===0 ? 'rgba(0, 255, 255, 0.15)' : (i===1 ? 'rgba(255, 0, 255, 0.1)' : 'rgba(124, 109, 250, 0.1)'));
+    grad.addColorStop(1, 'transparent');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, w, h);
+  }
+  ctx.restore();
+
+  // Wave function
+  ctx.beginPath();
+  ctx.strokeStyle = 'rgba(34, 211, 238, 0.6)';
+  ctx.lineWidth = 2;
+  ctx.setLineDash([5, 5]);
+  for(let x=0; x<w; x+=2) {
+    const y = cy + Math.sin(x*0.05 + time*2) * Math.cos(x*0.01 - time) * 40;
+    if(x===0) ctx.moveTo(x, y);
+    else ctx.lineTo(x, y);
+  }
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Quantum Particles
+  quantumFlakes.forEach(p => {
+    p.phase += 0.02;
+    if (Math.random() > 0.99) p.active = !p.active;
+    if (p.active) {
+      const opacity = (Math.sin(p.phase) + 1) / 2;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size, 0, Math.PI*2);
+      ctx.fillStyle = `rgba(192, 132, 252, ${opacity * 0.6})`;
+      ctx.fill();
+      // Entanglement lines
+      if (Math.random() > 0.98) {
+         const other = quantumFlakes[Math.floor(Math.random() * quantumFlakes.length)];
+         if (other.active) {
+           ctx.beginPath();
+           ctx.moveTo(p.x, p.y);
+           ctx.lineTo(other.x, other.y);
+           ctx.strokeStyle = 'rgba(124, 109, 250, 0.1)';
+           ctx.stroke();
+         }
+      }
+    }
+  });
+
+  // Unique Physics Formulas & Equations
+  const equations = [
+    'iħ ∂ψ/∂t = Ĥψ',
+    'Δx Δp ≥ ħ/2',
+    'E = mc²',
+    'S = k ln W',
+    'Gμν + Λgμν = κTμν',
+    'λ = h/p',
+    '∮B·dA = 0',
+    'F = G(m₁m₂)/r²'
+  ];
+  ctx.save();
+  ctx.font = `italic 500 ${Math.min(w,h)*0.04}px 'Space Grotesk'`;
+  ctx.textAlign = 'left';
+  equations.forEach((eq, i) => {
+    // Animation: Pulse and Drift
+    const pulse = (Math.sin(time + i * 1.5) + 1) / 2; // Opacity pulse
+    const driftX = Math.sin(time * 0.5 + i) * 10;    // Horizontal back and forth
+    const driftY = Math.cos(time * 0.3 + i) * 5;     // Vertical back and forth
+
+    const eqX = 20 + (i % 2) * (w * 0.6) + driftX;
+    const eqY = 40 + Math.floor(i / 2) * (h * 0.22) + driftY;
+    
+    ctx.fillStyle = `rgba(34, 211, 238, ${0.05 + pulse * 0.25})`; // Glow effect
+    ctx.fillText(eq, eqX, eqY);
+    
+    // Subtle second layer for "glitch" or "lighting" feel
+    if (pulse > 0.8) {
+      ctx.fillStyle = `rgba(192, 132, 252, ${pulse * 0.3})`;
+      ctx.fillText(eq, eqX + 1, eqY + 1);
+    }
+  });
+  ctx.restore();
+
+  // Time display
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  const timeStr = `${t.pad12}:${t.pad(t.m)}:${t.pad(t.s)}`;
+  
+  // Superposition effect
+  ctx.font = `800 ${Math.min(w,h)*0.18}px 'Space Grotesk'`;
+  ctx.fillStyle = 'rgba(34, 211, 238, 0.4)';
+  ctx.fillText(timeStr, cx + 2, cy + 2);
+  ctx.fillStyle = 'rgba(244, 114, 182, 0.4)';
+  ctx.fillText(timeStr, cx - 2, cy - 2);
+  ctx.fillStyle = '#fff';
+  ctx.fillText(timeStr, cx, cy);
+
+  ctx.font = `600 ${Math.min(w,h)*0.06}px 'Orbitron'`;
+  ctx.fillStyle = 'rgba(34, 211, 238, 0.8)';
+  ctx.fillText('Ψ WAVE FUNCTION ACTIVE', cx, cy + h*0.25);
+}
+
+/* ── 38. MECHA CORE (ROBOTICS) ─────────────── */
+let roboticsSensors = [];
+function initRobotics(w, h) {
+  if (roboticsSensors.length > 0) return;
+  for (let i = 0; i < 15; i++) {
+    roboticsSensors.push(Math.random());
+  }
+}
+
+function drawRobotics(ctx, w, h) {
+  const t = getTime();
+  const cx = w/2, cy = h/2;
+  const R = Math.min(w, h) * 0.4;
+  initRobotics(w, h);
+
+  ctx.fillStyle = '#0a0a0f';
+  ctx.fillRect(0, 0, w, h);
+
+  // Grid
+  ctx.strokeStyle = 'rgba(124, 109, 250, 0.05)';
+  ctx.lineWidth = 1;
+  for(let x=0; x<w; x+=30) { ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,h); ctx.stroke(); }
+  for(let y=0; y<h; y+=30) { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(w,y); ctx.stroke(); }
+
+  const time = Date.now() / 1000;
+
+  // Mechanical Core
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.rotate(time * 0.2);
+  
+  // Outer ring with teeth
+  ctx.beginPath();
+  ctx.strokeStyle = '#22d3ee';
+  ctx.lineWidth = 4;
+  ctx.arc(0, 0, R, 0, Math.PI*2);
+  ctx.stroke();
+
+  for(let i=0; i<12; i++) {
+    ctx.rotate(Math.PI/6);
+    ctx.fillStyle = '#22d3ee';
+    ctx.fillRect(R-5, -10, 15, 20);
+  }
+  ctx.restore();
+
+  // Sensor bars
+  const barW = 6;
+  const barGap = 4;
+  roboticsSensors.forEach((val, i) => {
+    const target = (Math.sin(time * 2 + i) + 1) / 2;
+    roboticsSensors[i] = lerp(val, target, 0.1);
+    const bh = roboticsSensors[i] * 60;
+    ctx.fillStyle = i % 2 === 0 ? '#fbbf24' : '#22d3ee';
+    ctx.fillRect(w - 40 - i*(barW+barGap), h - 40, barW, -bh);
+  });
+
+  // Industrial Brackets
+  ctx.strokeStyle = '#94a3b8';
+  ctx.lineWidth = 2;
+  const bw = 240, bh = 100;
+  ctx.beginPath();
+  ctx.moveTo(cx - bw/2, cy - bh/2 + 20);
+  ctx.lineTo(cx - bw/2, cy - bh/2);
+  ctx.lineTo(cx - bw/2 + 20, cy - bh/2);
+  ctx.stroke();
+
+  ctx.beginPath();
+  ctx.moveTo(cx + bw/2, cy + bh/2 - 20);
+  ctx.lineTo(cx + bw/2, cy + bh/2);
+  ctx.lineTo(cx + bw/2 - 20, cy + bh/2);
+  ctx.stroke();
+
+  // Scanning Line
+  const scanY = (time * 100) % h;
+  ctx.fillStyle = 'rgba(34, 211, 238, 0.05)';
+  ctx.fillRect(0, scanY, w, 2);
+
+  // Time
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.font = `700 ${Math.min(w,h)*0.18}px 'Outfit'`;
+  ctx.fillStyle = '#fff';
+  ctx.fillText(`${t.pad12}:${t.pad(t.m)}:${t.pad(t.s)}`, cx, cy);
+  
+  ctx.font = `600 ${Math.min(w,h)*0.05}px 'Orbitron'`;
+  ctx.fillStyle = '#fbbf24';
+  ctx.fillText('CORE SYSTEM: NOMINAL', cx, cy + 40);
+  ctx.fillText(`${t.ampm} UNIT`, cx, cy - 40);
+}
+
+/* ── 39. EVENT HORIZON (BLACK HOLE) ───────── */
+let singularityParticles = [];
+function initEventHorizon(w, h) {
+  if (singularityParticles.length > 0) return;
+  for (let i = 0; i < 150; i++) {
+    singularityParticles.push({
+      angle: Math.random() * Math.PI * 2,
+      dist: Math.random() * Math.max(w, h),
+      speed: Math.random() * 0.02 + 0.01,
+      size: Math.random() * 2 + 1,
+      color: Math.random() > 0.5 ? '#fbbf24' : '#f87171'
+    });
+  }
+}
+
+function drawEventHorizon(ctx, w, h) {
+  const t = getTime();
+  const cx = w/2, cy = h/2;
+  const R = Math.min(w, h) * 0.25;
+  initEventHorizon(w, h);
+
+  ctx.fillStyle = '#020205';
+  ctx.fillRect(0, 0, w, h);
+
+  const time = Date.now() / 1000;
+
+  // Accretion Disk Glow
+  const grad = ctx.createRadialGradient(cx, cy, R*0.8, cx, cy, R*2.5);
+  grad.addColorStop(0, 'rgba(251, 191, 36, 0.4)');
+  grad.addColorStop(0.3, 'rgba(248, 113, 113, 0.2)');
+  grad.addColorStop(1, 'transparent');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, w, h);
+
+  // Spacetime Warping Particles
+  singularityParticles.forEach(p => {
+    p.angle += p.speed;
+    const pull = 200 / (p.dist + 10);
+    p.dist -= pull * 0.1;
+    if (p.dist < R*0.7) p.dist = Math.max(w, h) * (0.8 + Math.random()*0.4);
+
+    const x = cx + Math.cos(p.angle) * p.dist;
+    const y = cy + Math.sin(p.angle) * p.dist * 0.6;
+
+    ctx.beginPath();
+    ctx.arc(x, y, p.size, 0, Math.PI*2);
+    ctx.fillStyle = p.color;
+    ctx.fill();
+    
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    ctx.lineTo(x - Math.cos(p.angle)*10, y - Math.sin(p.angle)*10);
+    ctx.strokeStyle = p.color + '33';
+    ctx.stroke();
+  });
+
+  ctx.beginPath();
+  ctx.arc(cx, cy, R, 0, Math.PI*2);
+  ctx.fillStyle = '#000';
+  ctx.fill();
+  ctx.strokeStyle = '#fbbf24';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  ctx.save();
+  ctx.beginPath();
+  ctx.arc(cx, cy, R * 1.1, 0, Math.PI*2);
+  ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
+  ctx.lineWidth = 15;
+  ctx.stroke();
+  ctx.restore();
+
+  ctx.beginPath();
+  ctx.arc(cx, cy, 2, 0, Math.PI*2);
+  ctx.fillStyle = '#fff';
+  ctx.fill();
+
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  const timeStr = `${t.pad12}:${t.pad(t.m)}:${t.pad(t.s)}`;
+  
+  ctx.font = `900 ${Math.min(w,h)*0.16}px 'Space Grotesk'`;
+  ctx.fillStyle = 'rgba(255,255,255,0.9)';
+  ctx.fillText(timeStr, cx, cy);
+  
+  ctx.font = `600 ${Math.min(w,h)*0.05}px 'Orbitron'`;
+  ctx.fillStyle = '#f87171';
+  ctx.fillText('TIME DILATION: 0.9998g', cx, cy + R + 40);
+  ctx.fillText('EVENT HORIZON REACHED', cx, cy - R - 40);
 }
 
 function buildStandaloneHTML(theme) {
