@@ -431,6 +431,9 @@ section {
 .gold-badge    { background: rgba(255,215,0,0.12);  color: #ffd700;         border: 1px solid rgba(255,215,0,0.3); }
 .fluid-badge   { background: rgba(34,211,238,0.12); color: #22d3ee;         border: 1px solid rgba(34,211,238,0.3); }
 .bloom-badge   { background: rgba(244,114,182,0.12); color: #f472b6;        border: 1px solid rgba(244,114,182,0.3); }
+.synthwave-badge { background: rgba(217,70,239,0.12); color: #d946ef;        border: 1px solid rgba(217,70,239,0.3); }
+.vortex-badge  { background: rgba(139,92,246,0.12); color: #8b5cf6;        border: 1px solid rgba(139,92,246,0.3); }
+.forest-badge  { background: rgba(16,185,129,0.12); color: #10b981;        border: 1px solid rgba(16,185,129,0.3); }
 
 .live-dot {
   display: inline-block;

@@ -1448,7 +1448,10 @@ const CLOCKS = {
   arctic:  { fn: drawArctic,  name: 'Arctic Frost' },
   gold:    { fn: drawGold,    name: 'Golden Hour' },
   nebula:  { fn: drawFluid,   name: 'Nebula Bloom' },
-  bloom:   { fn: drawBloom,   name: 'Geometric Bloom' }
+  bloom:   { fn: drawBloom,   name: 'Geometric Bloom' },
+  synthwave: { fn: drawSynthwave, name: 'Synthwave Sunset' },
+  vortex:  { fn: drawVortex,  name: 'Quantum Vortex' },
+  forest:  { fn: drawForest,  name: 'Emerald Forest' }
 };
 
 // ─────────────────────────────────────────────
@@ -1590,6 +1593,9 @@ const THEME_GLOBALS = {
   gold: ``,
   nebula: `let fluidBlobs = [];`,
   bloom: ``,
+  synthwave: `let synthwaveOffset = 0;`,
+  vortex: `let vortexParticles = [];`,
+  forest: `let leafShapes = [];`,
 };
 
 // Map theme → which helper init functions it needs (by reference)
@@ -1598,6 +1604,8 @@ function getThemeHelpers(theme) {
     matrix:  typeof initMatrixDrops  === 'function' ? [initMatrixDrops]  : [],
     binary:  typeof initBinaryDrops  === 'function' ? [initBinaryDrops]  : [],
     holo:    typeof initHexParticles === 'function' ? [initHexParticles] : [],
+    vortex:  typeof initVortex       === 'function' ? [initVortex]       : [],
+    forest:  typeof initForest       === 'function' ? [initForest]       : [],
     crystal: typeof initCrystal      === 'function' ? [initCrystal]      : [],
     molten:  typeof initMolten       === 'function' ? [initMolten]       : [],
     circuit: typeof initCircuit      === 'function' ? [initCircuit]      : [],
@@ -2657,6 +2665,237 @@ function drawBloom(ctx, w, h) {
   ctx.shadowBlur = 30; ctx.shadowColor = '#c084fc';
   ctx.fillText(timeStr, cx, cy);
   ctx.shadowBlur = 0;
+}
+
+/* ── 34. SYNTHWAVE SUNSET ───────────────────────── */
+let synthwaveOffset = 0;
+function drawSynthwave(ctx, w, h) {
+  const t = getTime();
+  const cx = w / 2, cy = h / 2;
+  const now = performance.now() / 1000;
+  synthwaveOffset += 0.015;
+
+  // Deep night background
+  ctx.fillStyle = '#0a001a';
+  ctx.fillRect(0, 0, w, h);
+
+  // Moving grid
+  ctx.strokeStyle = 'rgba(255, 0, 255, 0.2)';
+  ctx.lineWidth = 1;
+  const horizon = h * 0.6;
+  const gridW = w * 1.5;
+  const gridLines = 15;
+  
+  ctx.save();
+  ctx.beginPath();
+  for (let i = 0; i <= gridLines; i++) {
+    const x = cx + (i - gridLines / 2) * (gridW / gridLines) * 2;
+    ctx.moveTo(cx, horizon);
+    ctx.lineTo(x, h);
+  }
+  ctx.stroke();
+
+  // Horizontal moving lines
+  for (let i = 0; i < 10; i++) {
+    const linePos = (i + (synthwaveOffset % 1)) / 10;
+    const y = horizon + Math.pow(linePos, 2) * (h - horizon);
+    ctx.beginPath();
+    ctx.moveTo(0, y);
+    ctx.lineTo(w, y);
+    ctx.strokeStyle = `rgba(255, 0, 255, ${linePos * 0.4})`;
+    ctx.lineWidth = 1 + linePos * 2;
+    ctx.stroke();
+  }
+  ctx.restore();
+
+  // Retro Sun
+  const sunR = Math.min(w, h) * 0.25;
+  const sunY = horizon - sunR * 0.2;
+  const sunGrd = ctx.createLinearGradient(0, sunY - sunR, 0, sunY + sunR);
+  sunGrd.addColorStop(0, '#ff00ff');
+  sunGrd.addColorStop(0.5, '#ff0080');
+  sunGrd.addColorStop(1, '#ffcc00');
+  
+  ctx.save();
+  // Sliced effect
+  for (let i = 0; i < 10; i++) {
+    const sliceH = sunR * 0.15;
+    const sliceY = sunY - sunR + i * (sunR * 0.22);
+    const gap = Math.pow(i / 10, 2) * 15;
+    
+    ctx.beginPath();
+    ctx.arc(cx, sunY, sunR, 0, Math.PI * 2);
+    ctx.clip();
+    
+    ctx.fillStyle = sunGrd;
+    ctx.fillRect(cx - sunR, sliceY, sunR * 2, sliceH - gap);
+  }
+  ctx.restore();
+
+  // Digital Time
+  const timeStr = `${t.pad12}:${t.pad(t.m)}:${t.pad(t.s)}`;
+  ctx.font = `italic 900 ${Math.min(w, h) * 0.14}px 'Orbitron', sans-serif`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  
+  // Glowing text
+  ctx.shadowBlur = 20;
+  ctx.shadowColor = '#00ffff';
+  ctx.fillStyle = '#00ffff';
+  ctx.fillText(timeStr, cx, sunY + sunR * 0.3);
+  
+  ctx.font = `italic 700 ${Math.min(w, h) * 0.05}px 'Orbitron', sans-serif`;
+  ctx.fillStyle = '#ff00ff';
+  ctx.shadowColor = '#ff00ff';
+  ctx.fillText(`${t.ampm} \u2022 SYSTEM READY`, cx, sunY + sunR * 0.8);
+  ctx.shadowBlur = 0;
+}
+
+/* ── 35. QUANTUM VORTEX ─────────────────────────── */
+let vortexParticles = [];
+function initVortex(w, h) {
+  if (vortexParticles.length > 0) return;
+  for (let i = 0; i < 150; i++) {
+    vortexParticles.push({
+      angle: Math.random() * Math.PI * 2,
+      dist: Math.random() * Math.max(w, h) * 0.6,
+      speed: 0.002 + Math.random() * 0.005,
+      size: 1 + Math.random() * 3,
+      hue: 240 + Math.random() * 60
+    });
+  }
+}
+function drawVortex(ctx, w, h) {
+  const t = getTime();
+  const cx = w / 2, cy = h / 2;
+  const R = Math.min(w, h) * 0.35;
+  initVortex(w, h);
+
+  ctx.fillStyle = '#020008';
+  ctx.fillRect(0, 0, w, h);
+
+  // Vortex animation
+  for (let p of vortexParticles) {
+    p.angle += p.speed;
+    p.dist -= 0.5;
+    if (p.dist < 10) p.dist = Math.max(w, h) * 0.6;
+    
+    const x = cx + Math.cos(p.angle) * p.dist;
+    const y = cy + Math.sin(p.angle) * p.dist;
+    
+    const alpha = (1 - p.dist / (Math.max(w, h) * 0.6)) * 0.6;
+    ctx.beginPath();
+    ctx.arc(x, y, p.size, 0, Math.PI * 2);
+    ctx.fillStyle = `hsla(${p.hue}, 80%, 70%, ${alpha})`;
+    ctx.fill();
+  }
+
+  // Central Glow
+  const grd = ctx.createRadialGradient(cx, cy, 0, cx, cy, R);
+  grd.addColorStop(0, 'rgba(124, 109, 250, 0.2)');
+  grd.addColorStop(1, 'transparent');
+  ctx.fillStyle = grd;
+  ctx.beginPath(); ctx.arc(cx, cy, R, 0, Math.PI * 2); ctx.fill();
+
+  // Hands
+  const hA = ((t.h12 + t.m/60)/12)*Math.PI*2;
+  const mA = ((t.m + t.s/60)/60)*Math.PI*2;
+  const sA = ((t.s + t.ms/1000)/60)*Math.PI*2;
+
+  ctx.shadowBlur = 20;
+  drawHand(ctx, cx, cy, hA, R * 0.5, '#7c6dfa', 6, R * 0.1);
+  drawHand(ctx, cx, cy, mA, R * 0.8, '#c084fc', 4, R * 0.1);
+  ctx.shadowColor = '#00ffff';
+  drawHand(ctx, cx, cy, sA, R * 0.9, '#00ffff', 2, R * 0.2);
+  ctx.shadowBlur = 0;
+
+  // Time text overlay
+  ctx.font = `600 ${Math.min(w, h) * 0.05}px 'Orbitron', sans-serif`;
+  ctx.textAlign = 'center';
+  ctx.fillStyle = 'rgba(124, 109, 250, 0.5)';
+  ctx.fillText(`${t.pad12}:${t.pad(t.m)} ${t.ampm}`, cx, cy + R * 1.3);
+}
+
+/* ── 36. EMERALD FOREST ─────────────────────────── */
+let leafShapes = [];
+function initForest(w, h) {
+  if (leafShapes.length > 0) return;
+  for (let i = 0; i < 12; i++) {
+    leafShapes.push({
+      x: Math.random() * w,
+      y: Math.random() * h,
+      r: 100 + Math.random() * 200,
+      phase: Math.random() * Math.PI * 2,
+      speed: 0.005 + Math.random() * 0.01,
+      hue: 140 + Math.random() * 40
+    });
+  }
+}
+function drawForest(ctx, w, h) {
+  const t = getTime();
+  const cx = w / 2, cy = h / 2;
+  const R = Math.min(w, h) * 0.35;
+  initForest(w, h);
+
+  // Forest background
+  const bg = ctx.createLinearGradient(0, 0, 0, h);
+  bg.addColorStop(0, '#001a0a');
+  bg.addColorStop(1, '#000502');
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, w, h);
+
+  // Organic shapes
+  ctx.globalCompositeOperation = 'screen';
+  for (let s of leafShapes) {
+    s.phase += s.speed;
+    const pulse = 1 + Math.sin(s.phase) * 0.1;
+    const grd = ctx.createRadialGradient(s.x, s.y, 0, s.x, s.y, s.r * pulse);
+    grd.addColorStop(0, `hsla(${s.hue}, 70%, 40%, 0.1)`);
+    grd.addColorStop(1, 'transparent');
+    ctx.fillStyle = grd;
+    ctx.beginPath();
+    ctx.arc(s.x, s.y, s.r * pulse, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  ctx.globalCompositeOperation = 'source-over';
+
+  // Minimal Dial
+  ctx.beginPath();
+  ctx.arc(cx, cy, R, 0, Math.PI * 2);
+  ctx.strokeStyle = 'rgba(74, 222, 128, 0.1)';
+  ctx.lineWidth = 1;
+  ctx.stroke();
+
+  // Tick marks
+  for (let i = 0; i < 12; i++) {
+    const a = (i/12)*Math.PI*2 - Math.PI/2;
+    ctx.beginPath();
+    ctx.arc(cx + Math.cos(a)*R, cy + Math.sin(a)*R, 3, 0, Math.PI*2);
+    ctx.fillStyle = 'rgba(74, 222, 128, 0.3)';
+    ctx.fill();
+  }
+
+  // Hands
+  const hA = ((t.h12 + t.m/60)/12)*Math.PI*2;
+  const mA = ((t.m + t.s/60)/60)*Math.PI*2;
+  const sA = ((t.s + t.ms/1000)/60)*Math.PI*2;
+
+  drawHand(ctx, cx, cy, hA, R * 0.5, '#4ade80', 4, R * 0.05);
+  drawHand(ctx, cx, cy, mA, R * 0.8, '#22c55e', 2, R * 0.1);
+  
+  // Second hand
+  ctx.beginPath();
+  ctx.moveTo(cx, cy);
+  ctx.lineTo(cx + Math.cos(sA - Math.PI/2)*R*0.9, cy + Math.sin(sA - Math.PI/2)*R*0.9);
+  ctx.strokeStyle = '#facc15';
+  ctx.lineWidth = 1;
+  ctx.stroke();
+
+  // Digital time small
+  ctx.font = `300 ${Math.min(w, h) * 0.06}px 'Outfit', sans-serif`;
+  ctx.textAlign = 'center';
+  ctx.fillStyle = 'rgba(74, 222, 128, 0.6)';
+  ctx.fillText(`${t.pad12}:${t.pad(t.m)}`, cx, cy + R * 0.2);
 }
 
 function buildStandaloneHTML(theme) {
