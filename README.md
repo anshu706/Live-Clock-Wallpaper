@@ -15,6 +15,7 @@ Turn your desktop into a living canvas with beautiful, real-time animated clock 
 **Prism** is a lightweight web project that showcases animated clock wallpapers built with pure HTML, CSS, and Canvas JavaScript.
 
 Each design is synchronized with your local system time and can be:
+
 - previewed in full screen,
 - downloaded as a standalone live HTML wallpaper,
 - used with desktop wallpaper tools like **Lively Wallpaper** or **Wallpaper Engine**.
@@ -23,7 +24,7 @@ Each design is synchronized with your local system time and can be:
 
 ## 🔥 Features
 
-- 🎨 Multiple unique animated clock themes (neon, cosmic, aurora, matrix, retro, and more)
+- 🎨 **48 unique animated clock themes** (neon, cosmic, aurora, mechanical, organic, and more)
 - 🕒 Real-time clock rendering with smooth animation
 - 🖥 Fullscreen live preview modal
 - 📥 One-click export to standalone wallpaper HTML files
@@ -35,6 +36,7 @@ Each design is synchronized with your local system time and can be:
 ## 🚀 Quick Start
 
 ### Option 1: Run locally (simple)
+
 1. Clone the repository:
    ```bash
    git clone https://github.com/anshu706/Live-Clock-Wallpaper.git
@@ -42,6 +44,7 @@ Each design is synchronized with your local system time and can be:
 2. Open `index.html` in your browser.
 
 ### Option 2: Use the hosted version
+
 Open: **https://anshu706.github.io/Live-Clock-Wallpaper/**
 
 ---

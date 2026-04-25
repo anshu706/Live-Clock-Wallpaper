@@ -1411,6 +1411,472 @@ function drawSwiss(ctx, w, h) {
   ctx.beginPath(); ctx.arc(cx, cy, R*0.02, 0, Math.PI*2); ctx.fillStyle='#ff0000'; ctx.fill();
 }
 
+/* ── NEW: MINIMALIST DEPTH ──────────────────────────── */
+function drawMinimalDepth(ctx, w, h) {
+  const t = getTime();
+  const cx = w / 2, cy = h / 2;
+  
+  // Background with depth gradient
+  const bgGrd = ctx.createLinearGradient(0, 0, 0, h);
+  bgGrd.addColorStop(0, '#0a0e1a');
+  bgGrd.addColorStop(0.5, '#0f1428');
+  bgGrd.addColorStop(1, '#050810');
+  ctx.fillStyle = bgGrd;
+  ctx.fillRect(0, 0, w, h);
+  
+  // Subtle grid lines
+  ctx.strokeStyle = 'rgba(100, 150, 200, 0.08)';
+  ctx.lineWidth = 0.5;
+  const gridSize = Math.min(w, h) / 10;
+  for (let i = 0; i < w; i += gridSize) {
+    ctx.beginPath();
+    ctx.moveTo(i, 0);
+    ctx.lineTo(i, h);
+    ctx.stroke();
+  }
+  for (let i = 0; i < h; i += gridSize) {
+    ctx.beginPath();
+    ctx.moveTo(0, i);
+    ctx.lineTo(w, i);
+    ctx.stroke();
+  }
+  
+  // Soft shadow backdrop
+  const shadowGrd = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.max(w, h) * 0.6);
+  shadowGrd.addColorStop(0, 'rgba(100, 200, 255, 0.04)');
+  shadowGrd.addColorStop(1, 'transparent');
+  ctx.fillStyle = shadowGrd;
+  ctx.fillRect(0, 0, w, h);
+  
+  // Main time display
+  const timeStr = `${t.pad12}:${t.pad(t.m)}:${t.pad(t.s)}`;
+  ctx.font = `300 ${Math.min(w, h) * 0.16}px 'Outfit', sans-serif`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  
+  // Shadow layers for depth
+  for (let i = 3; i > 0; i--) {
+    ctx.fillStyle = `rgba(50, 100, 150, ${0.08 * i})`;
+    ctx.fillText(timeStr, cx + i * 2, cy + i * 2);
+  }
+  
+  // Main text with glow
+  ctx.shadowBlur = 25;
+  ctx.shadowColor = 'rgba(100, 180, 255, 0.5)';
+  ctx.fillStyle = '#c8e6ff';
+  ctx.fillText(timeStr, cx, cy);
+  ctx.shadowBlur = 0;
+  
+  // AM/PM
+  ctx.font = `400 ${Math.min(w, h) * 0.05}px 'Orbitron', monospace`;
+  ctx.fillStyle = 'rgba(100, 180, 255, 0.7)';
+  ctx.fillText(t.ampm, cx, cy + Math.min(w, h) * 0.15);
+  
+  // Date info
+  const d = new Date();
+  const dateStr = d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+  ctx.font = `300 ${Math.min(w, h) * 0.035}px 'Space Grotesk', sans-serif`;
+  ctx.fillStyle = 'rgba(100, 180, 255, 0.5)';
+  ctx.fillText(dateStr, cx, cy + Math.min(w, h) * 0.22);
+}
+
+/* ── NEW: CLASSIC MECHANICAL ──────────────────────────── */
+let mechRotation = 0;
+function drawClassicMechanical(ctx, w, h) {
+  const t = getTime();
+  const cx = w / 2, cy = h / 2;
+  const R = Math.min(w, h) * 0.35;
+  mechRotation += 0.001;
+  
+  // Cream background
+  ctx.fillStyle = '#faf6f0';
+  ctx.fillRect(0, 0, w, h);
+  
+  // Outer ring with burnished gold
+  const ringGrd = ctx.createRadialGradient(cx, cy, R * 0.95, cx, cy, R * 1.05);
+  ringGrd.addColorStop(0, '#d4af37');
+  ringGrd.addColorStop(0.5, '#f0e68c');
+  ringGrd.addColorStop(1, '#b8860b');
+  ctx.fillStyle = ringGrd;
+  ctx.beginPath();
+  ctx.arc(cx, cy, R * 1.04, 0, Math.PI * 2);
+  ctx.fill();
+  
+  // Face
+  const faceGrd = ctx.createRadialGradient(cx, cy, 0, cx, cy, R);
+  faceGrd.addColorStop(0, '#fff8f0');
+  faceGrd.addColorStop(1, '#f5e6d3');
+  ctx.fillStyle = faceGrd;
+  ctx.beginPath();
+  ctx.arc(cx, cy, R, 0, Math.PI * 2);
+  ctx.fill();
+  
+  // Roman numerals (simplified as dots and marks)
+  for (let i = 0; i < 12; i++) {
+    const angle = (i / 12) * Math.PI * 2 - Math.PI / 2;
+    const isHour = i % 3 === 0;
+    const dist = isHour ? R * 0.88 : R * 0.92;
+    ctx.save();
+    ctx.translate(cx + Math.cos(angle) * dist, cy + Math.sin(angle) * dist);
+    ctx.rotate(angle + Math.PI / 2);
+    
+    if (isHour) {
+      ctx.font = `bold ${R * 0.12}px serif`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillStyle = '#2c2c2c';
+      ctx.fillText(['XII', 'III', 'VI', 'IX'][i / 3], 0, 0);
+    }
+    ctx.restore();
+  }
+  
+  // Gear decoration (small rotating gears)
+  for (let g = 0; g < 4; g++) {
+    const gAngle = (g / 4) * Math.PI * 2 + mechRotation;
+    const gx = cx + Math.cos(gAngle) * R * 0.6;
+    const gy = cy + Math.sin(gAngle) * R * 0.6;
+    const gr = R * 0.08;
+    ctx.fillStyle = '#c0c0c0';
+    ctx.beginPath();
+    for (let t = 0; t < 8; t++) {
+      const ta = (t / 8) * Math.PI * 2;
+      const tr = (t % 2 === 0) ? gr : gr * 0.6;
+      const px = gx + Math.cos(ta) * tr;
+      const py = gy + Math.sin(ta) * tr;
+      if (t === 0) ctx.moveTo(px, py);
+      else ctx.lineTo(px, py);
+    }
+    ctx.closePath();
+    ctx.fill();
+  }
+  
+  // Hour hand (thick)
+  const hAngle = ((t.h12 + t.m / 60) / 12) * Math.PI * 2 - Math.PI / 2;
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.rotate(hAngle);
+  ctx.fillStyle = '#2c2c2c';
+  ctx.fillRect(-R * 0.04, -R * 0.25, R * 0.08, R * 0.25);
+  ctx.restore();
+  
+  // Minute hand (longer)
+  const mAngle = ((t.m + t.s / 60) / 60) * Math.PI * 2 - Math.PI / 2;
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.rotate(mAngle);
+  ctx.fillStyle = '#2c2c2c';
+  ctx.fillRect(-R * 0.035, -R * 0.4, R * 0.07, R * 0.4);
+  ctx.restore();
+  
+  // Second hand (thin, red)
+  const sAngle = ((t.s + t.ms / 1000) / 60) * Math.PI * 2 - Math.PI / 2;
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.rotate(sAngle);
+  ctx.strokeStyle = '#d32f2f';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.moveTo(0, R * 0.15);
+  ctx.lineTo(0, -R * 0.45);
+  ctx.stroke();
+  ctx.restore();
+  
+  // Center jewel
+  ctx.fillStyle = '#c0c0c0';
+  ctx.beginPath();
+  ctx.arc(cx, cy, R * 0.05, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = '#e8e8e8';
+  ctx.beginPath();
+  ctx.arc(cx, cy, R * 0.035, 0, Math.PI * 2);
+  ctx.fill();
+}
+
+/* ── NEW: FLUID GRADIENT ──────────────────────────── */
+let fluidHue = 0;
+function drawFluidGradient(ctx, w, h) {
+  const t = getTime();
+  const cx = w / 2, cy = h / 2;
+  const R = Math.min(w, h) * 0.35;
+  fluidHue = (fluidHue + 0.05) % 360;
+  
+  // Animated background gradient
+  const bgGrd = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.max(w, h));
+  bgGrd.addColorStop(0, `hsl(${fluidHue}, 70%, 15%)`);
+  bgGrd.addColorStop(0.5, `hsl(${(fluidHue + 60) % 360}, 60%, 10%)`);
+  bgGrd.addColorStop(1, `hsl(${(fluidHue + 120) % 360}, 50%, 8%)`);
+  ctx.fillStyle = bgGrd;
+  ctx.fillRect(0, 0, w, h);
+  
+  // Outer ring
+  ctx.strokeStyle = `hsl(${(fluidHue + 180) % 360}, 80%, 60%)`;
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.arc(cx, cy, R * 1.1, 0, Math.PI * 2);
+  ctx.stroke();
+  
+  // Minute markers
+  for (let i = 0; i < 60; i++) {
+    const angle = (i / 60) * Math.PI * 2 - Math.PI / 2;
+    const isHour = i % 5 === 0;
+    const inner = R * (isHour ? 0.85 : 0.92);
+    const outer = R * 0.98;
+    ctx.strokeStyle = isHour ? `hsl(${(fluidHue + 180) % 360}, 80%, 70%)` : `hsl(${(fluidHue + 180) % 360}, 60%, 50%)`;
+    ctx.lineWidth = isHour ? 2 : 1;
+    ctx.beginPath();
+    ctx.moveTo(cx + Math.cos(angle) * inner, cy + Math.sin(angle) * inner);
+    ctx.lineTo(cx + Math.cos(angle) * outer, cy + Math.sin(angle) * outer);
+    ctx.stroke();
+  }
+  
+  // Hour hand
+  const hAngle = ((t.h12 + t.m / 60) / 12) * Math.PI * 2;
+  drawHand(ctx, cx, cy, hAngle, R * 0.5, `hsl(${(fluidHue + 180) % 360}, 90%, 65%)`, 4, R * 0.08);
+  
+  // Minute hand
+  const mAngle = ((t.m + t.s / 60) / 60) * Math.PI * 2;
+  drawHand(ctx, cx, cy, mAngle, R * 0.75, `hsl(${(fluidHue + 180) % 360}, 85%, 70%)`, 3, R * 0.1);
+  
+  // Second hand with glow
+  const sAngle = ((t.s + t.ms / 1000) / 60) * Math.PI * 2;
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.rotate(sAngle);
+  ctx.shadowBlur = 12;
+  ctx.shadowColor = `hsl(${fluidHue}, 100%, 60%)`;
+  ctx.strokeStyle = `hsl(${fluidHue}, 100%, 65%)`;
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.moveTo(0, -R * 0.88);
+  ctx.lineTo(0, R * 0.15);
+  ctx.stroke();
+  ctx.shadowBlur = 0;
+  ctx.restore();
+  
+  // Center dot with pulse
+  const pulse = 0.8 + 0.2 * Math.sin(performance.now() / 1000);
+  ctx.fillStyle = `hsl(${fluidHue}, 100%, ${60 * pulse}%)`;
+  ctx.shadowBlur = 15;
+  ctx.shadowColor = `hsl(${fluidHue}, 100%, 60%)`;
+  ctx.beginPath();
+  ctx.arc(cx, cy, R * 0.06 * pulse, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.shadowBlur = 0;
+}
+
+/* ── NEW: RETRO SEGMENT ──────────────────────────── */
+function drawRetroSegment(ctx, w, h) {
+  const t = getTime();
+  const cx = w / 2, cy = h / 2;
+  
+  // Dark brown background
+  ctx.fillStyle = '#1a1208';
+  ctx.fillRect(0, 0, w, h);
+  
+  // Vignette
+  const vigGrd = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.max(w, h) * 0.7);
+  vigGrd.addColorStop(0, 'transparent');
+  vigGrd.addColorStop(1, 'rgba(0,0,0,0.7)');
+  ctx.fillStyle = vigGrd;
+  ctx.fillRect(0, 0, w, h);
+  
+  // 7-segment display generator
+  const segmentHeight = Math.min(w, h) * 0.18;
+  const segmentWidth = Math.min(w, h) * 0.09;
+  
+  function drawSegment(x, y, horizontal, active) {
+    ctx.fillStyle = active ? '#ff6b35' : 'rgba(255, 107, 53, 0.15)';
+    ctx.shadowBlur = active ? 15 : 0;
+    ctx.shadowColor = '#ff6b35';
+    
+    if (horizontal) {
+      ctx.fillRect(x - segmentWidth / 2, y, segmentWidth, segmentHeight * 0.4);
+    } else {
+      ctx.fillRect(x, y - segmentHeight * 0.2, segmentHeight * 0.4, segmentWidth);
+    }
+    ctx.shadowBlur = 0;
+  }
+  
+  // Display time segments
+  const timeStr = `${t.pad12}${t.pad(t.m)}${t.pad(t.s)}`;
+  const digitW = segmentWidth * 3;
+  const startX = cx - digitW * 1.5;
+  
+  // Helper to show 7-segment for digit
+  function showDigit(digit, px, py) {
+    const d = parseInt(digit);
+    const segments = [
+      [1,1,1,0,1,1,1], // 0
+      [0,0,1,0,0,1,0], // 1
+      [1,0,1,1,1,0,1], // 2
+      [1,0,1,1,0,1,1], // 3
+      [0,1,1,1,0,1,0], // 4
+      [1,1,0,1,0,1,1], // 5
+      [1,1,0,1,1,1,1], // 6
+      [1,0,1,0,0,1,0], // 7
+      [1,1,1,1,1,1,1], // 8
+      [1,1,1,1,0,1,1], // 9
+    ][d];
+    
+    // Top, top-left, top-right, middle, bottom-left, bottom-right, bottom
+    drawSegment(px, py - segmentHeight * 0.6, true, segments[0]); // top
+    drawSegment(px - segmentWidth * 1.2, py - segmentHeight * 0.3, false, segments[1]); // top-left
+    drawSegment(px + segmentWidth * 1.2, py - segmentHeight * 0.3, false, segments[2]); // top-right
+    drawSegment(px, py, true, segments[3]); // middle
+    drawSegment(px - segmentWidth * 1.2, py + segmentHeight * 0.3, false, segments[4]); // bottom-left
+    drawSegment(px + segmentWidth * 1.2, py + segmentHeight * 0.3, false, segments[5]); // bottom-right
+    drawSegment(px, py + segmentHeight * 0.6, true, segments[6]); // bottom
+  }
+  
+  // Draw digits
+  for (let i = 0; i < 6; i++) {
+    const x = startX + i * digitW;
+    showDigit(timeStr[i], x, cy);
+    
+    // Colon separators
+    if (i === 1 || i === 3) {
+      ctx.fillStyle = '#ff6b35';
+      ctx.shadowBlur = 10;
+      ctx.shadowColor = '#ff6b35';
+      ctx.beginPath();
+      ctx.arc(x + digitW * 0.5, cy - segmentHeight * 0.25, 3, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(x + digitW * 0.5, cy + segmentHeight * 0.25, 3, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.shadowBlur = 0;
+    }
+  }
+  
+  // AM/PM indicator
+  ctx.font = `bold ${Math.min(w, h) * 0.05}px monospace`;
+  ctx.fillStyle = '#ff6b35';
+  ctx.shadowBlur = 8;
+  ctx.shadowColor = '#ff6b35';
+  ctx.textAlign = 'center';
+  ctx.fillText(t.ampm, cx, cy + Math.min(w, h) * 0.22);
+  ctx.shadowBlur = 0;
+}
+
+/* ── NEW: ORGANIC BLOOM ──────────────────────────── */
+let bloomAngle = 0;
+let bloomPetals = [];
+function initBloomPetals(w, h) {
+  if (bloomPetals.length > 0) return;
+  const cx = w / 2, cy = h / 2;
+  for (let i = 0; i < 6; i++) {
+    const angle = (i / 6) * Math.PI * 2;
+    bloomPetals.push({
+      angle: angle,
+      distance: Math.min(w, h) * 0.25,
+      speed: (Math.random() - 0.5) * 0.002,
+      hue: 120 + i * 30,
+    });
+  }
+}
+
+function drawOrganicBloom(ctx, w, h) {
+  const t = getTime();
+  const cx = w / 2, cy = h / 2;
+  const R = Math.min(w, h) * 0.3;
+  bloomAngle += 0.002;
+  
+  initBloomPetals(w, h);
+  
+  // Dark green background
+  const bgGrd = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.max(w, h));
+  bgGrd.addColorStop(0, '#0d2818');
+  bgGrd.addColorStop(1, '#051008');
+  ctx.fillStyle = bgGrd;
+  ctx.fillRect(0, 0, w, h);
+  
+  // Animated petals
+  for (const petal of bloomPetals) {
+    petal.angle += petal.speed;
+    const px = cx + Math.cos(petal.angle) * petal.distance;
+    const py = cy + Math.sin(petal.angle) * petal.distance;
+    
+    // Pulse effect based on time
+    const pulse = 0.6 + 0.4 * Math.sin(performance.now() / 800 + petal.hue);
+    const petalSize = R * pulse;
+    
+    // Petal shape
+    ctx.save();
+    ctx.globalAlpha = 0.6;
+    const petalGrd = ctx.createRadialGradient(px, py, 0, px, py, petalSize);
+    petalGrd.addColorStop(0, `hsl(${petal.hue}, 80%, 70%)`);
+    petalGrd.addColorStop(0.7, `hsl(${petal.hue}, 70%, 50%)`);
+    petalGrd.addColorStop(1, `hsl(${petal.hue}, 60%, 30%)`);
+    ctx.fillStyle = petalGrd;
+    ctx.beginPath();
+    ctx.ellipse(px, py, petalSize * 1.2, petalSize * 0.6, petal.angle, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.globalAlpha = 1;
+    ctx.restore();
+  }
+  
+  // Center analog clock
+  ctx.strokeStyle = 'rgba(200, 255, 200, 0.3)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.arc(cx, cy, R, 0, Math.PI * 2);
+  ctx.stroke();
+  
+  // Hour markers as small leaves
+  for (let i = 0; i < 12; i++) {
+    const angle = (i / 12) * Math.PI * 2 - Math.PI / 2;
+    const dist = R * 0.88;
+    const mx = cx + Math.cos(angle) * dist;
+    const my = cy + Math.sin(angle) * dist;
+    
+    ctx.save();
+    ctx.translate(mx, my);
+    ctx.rotate(angle);
+    ctx.fillStyle = 'rgba(100, 200, 100, 0.6)';
+    ctx.beginPath();
+    ctx.ellipse(0, 0, 4, 8, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+  
+  // Hour hand
+  const hAngle = ((t.h12 + t.m / 60) / 12) * Math.PI * 2;
+  drawHand(ctx, cx, cy, hAngle, R * 0.5, 'rgba(150, 255, 150, 0.8)', 3, R * 0.08);
+  
+  // Minute hand
+  const mAngle = ((t.m + t.s / 60) / 60) * Math.PI * 2;
+  drawHand(ctx, cx, cy, mAngle, R * 0.75, 'rgba(120, 230, 120, 0.8)', 2.5, R * 0.1);
+  
+  // Second hand
+  const sAngle = ((t.s + t.ms / 1000) / 60) * Math.PI * 2;
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.rotate(sAngle);
+  ctx.shadowBlur = 10;
+  ctx.shadowColor = 'rgba(100, 255, 100, 0.6)';
+  ctx.strokeStyle = 'rgba(150, 255, 150, 0.9)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(0, -R * 0.85);
+  ctx.lineTo(0, R * 0.15);
+  ctx.stroke();
+  ctx.shadowBlur = 0;
+  ctx.restore();
+  
+  // Center leaf
+  ctx.fillStyle = 'rgba(150, 255, 150, 0.7)';
+  ctx.beginPath();
+  ctx.ellipse(cx, cy, 6, 10, bloomAngle, 0, Math.PI * 2);
+  ctx.fill();
+  
+  // Time display in corner
+  const timeStr = `${t.pad12}:${t.pad(t.m)}`;
+  ctx.font = `400 ${Math.min(w, h) * 0.04}px 'Space Grotesk', sans-serif`;
+  ctx.fillStyle = 'rgba(150, 255, 150, 0.5)';
+  ctx.textAlign = 'right';
+  ctx.fillText(timeStr, w - Math.min(w, h) * 0.08, h - Math.min(w, h) * 0.08);
+}
+
 // ─────────────────────────────────────────────
 
 // RENDERER MAP
@@ -1458,7 +1924,12 @@ const CLOCKS = {
   neonarc:   { fn: drawNeonArc,  name: 'Neon Arc' },
   solarwind: { fn: drawSolarWind, name: 'Solar Wind' },
   terminal:  { fn: drawTerminal, name: 'Cyber Terminal' },
-  glass:     { fn: drawGlass,    name: 'Glassmorphic' }
+  glass:     { fn: drawGlass,    name: 'Glassmorphic' },
+  mindepth:  { fn: drawMinimalDepth, name: 'Minimalist Depth' },
+  mecha:     { fn: drawClassicMechanical, name: 'Classic Mechanical' },
+  fluido:    { fn: drawFluidGradient, name: 'Fluid Gradient' },
+  segment:   { fn: drawRetroSegment, name: 'Retro Segment' },
+  organicbloom: { fn: drawOrganicBloom, name: 'Organic Bloom' }
 };
 
 // ─────────────────────────────────────────────

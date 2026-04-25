@@ -1,868 +1,2085 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Prism – Live Clock Wallpapers</title>
-  <meta name="description" content="Stunning live clock wallpapers that show your real PC time. Choose from 8 unique animated clock designs — Neon, Cosmic, Matrix, Aurora & more." />
-  <meta property="og:title" content="Prism – Live Clock Wallpapers" />
-  <meta property="og:description" content="Free animated clock wallpapers synced to your system time." />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;500;600;700;800&family=Orbitron:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css" />
-</head>
-<body>
-
-  <!-- ============ NAV ============ -->
-  <nav id="navbar">
-    <div class="nav-inner">
-      <div class="nav-logo">
-        <span class="logo-icon">⧖</span>
-        <span class="logo-text">Prism</span>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Prism – Live Clock Wallpapers</title>
+    <meta
+      name="description"
+      content="Stunning live clock wallpapers that show your real PC time. Choose from 8 unique animated clock designs — Neon, Cosmic, Matrix, Aurora & more."
+    />
+    <meta property="og:title" content="Prism – Live Clock Wallpapers" />
+    <meta
+      property="og:description"
+      content="Free animated clock wallpapers synced to your system time."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;500;600;700;800&family=Orbitron:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <!-- ============ NAV ============ -->
+    <nav id="navbar">
+      <div class="nav-inner">
+        <div class="nav-logo">
+          <span class="logo-icon">⧖</span>
+          <span class="logo-text">Prism</span>
+        </div>
+        <ul class="nav-links">
+          <li><a href="#gallery">Gallery</a></li>
+          <li><a href="#features">Features</a></li>
+          <li><a href="#how">How to Use</a></li>
+        </ul>
+        <div class="nav-live-time" id="navTime"></div>
       </div>
-      <ul class="nav-links">
-        <li><a href="#gallery">Gallery</a></li>
-        <li><a href="#features">Features</a></li>
-        <li><a href="#how">How to Use</a></li>
-      </ul>
-      <div class="nav-live-time" id="navTime"></div>
+    </nav>
+
+    <!-- ============ HERO ============ -->
+    <section id="hero">
+      <div class="hero-bg">
+        <div class="hero-orb orb1"></div>
+        <div class="hero-orb orb2"></div>
+        <div class="hero-orb orb3"></div>
+        <canvas id="heroStars"></canvas>
+      </div>
+      <div class="hero-content">
+        <div class="hero-badge">✦ Live Wallpapers • Real Time • Free</div>
+        <h1 class="hero-title">
+          Your Clock.<br /><span class="gradient-text">Your Canvas.</span>
+        </h1>
+        <p class="hero-sub">
+          48 stunning animated clock wallpapers synced to your system time.
+          Download, set as wallpaper, and let your desktop come alive.
+        </p>
+        <div class="hero-cta">
+          <a href="#gallery" class="btn-primary">Browse Gallery ↓</a>
+          <a href="#how" class="btn-ghost">How to Use</a>
+        </div>
+        <div class="hero-stats">
+          <div class="stat">
+            <span class="stat-num">48</span
+            ><span class="stat-label">Unique Clocks</span>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat">
+            <span class="stat-num">HD</span
+            ><span class="stat-label">Quality</span>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat">
+            <span class="stat-num">Live</span
+            ><span class="stat-label">Real Time</span>
+          </div>
+        </div>
+      </div>
+      <!-- Hero Clock Preview -->
+      <div class="hero-clock-wrap">
+        <div class="hero-clock-frame">
+          <canvas id="heroClock" width="340" height="340"></canvas>
+          <div class="hero-clock-label">Cosmic Orbit — Live Preview</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ GALLERY ============ -->
+    <section id="gallery">
+      <div class="section-header">
+        <div class="section-tag">Gallery</div>
+        <h2>Choose Your <span class="gradient-text">Masterpiece</span></h2>
+        <p>
+          Every clock is animated, synced to your system time, and looks
+          incredible on any display.
+        </p>
+      </div>
+      <div class="clock-grid" id="clockGrid">
+        <!-- Card 1: Neon Pulse -->
+        <article class="clock-card" id="card-neon" data-theme="neon">
+          <div class="card-preview">
+            <canvas
+              class="preview-canvas"
+              id="preview-neon"
+              width="280"
+              height="180"
+            ></canvas>
+          </div>
+          <div class="card-info">
+            <div class="card-badge neon-badge">
+              <span class="live-dot"></span>Neon
+            </div>
+            <h3>Neon Pulse</h3>
+            <p>
+              Electric neon digits with pulsing glow on a dark grid background.
+            </p>
+            <div class="card-actions">
+              <button
+                class="btn-preview"
+                onclick="openPreview('neon')"
+                id="btn-preview-neon"
+              >
+                ⤢ Preview
+              </button>
+              <button
+                class="btn-download"
+                onclick="downloadWallpaper('neon')"
+                id="btn-download-neon"
+              >
+                ↓ Download
+              </button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Card 2: Cosmic Orbit -->
+        <article class="clock-card" id="card-cosmic" data-theme="cosmic">
+          <div class="card-preview">
+            <canvas
+              class="preview-canvas"
+              id="preview-cosmic"
+              width="280"
+              height="180"
+            ></canvas>
+          </div>
+          <div class="card-info">
+            <div class="card-badge cosmic-badge">
+              <span class="live-dot"></span>Cosmic
+            </div>
+            <h3>Cosmic Orbit</h3>
+            <p>
+              Orbiting planet rings with starfield and galaxy glow in deep
+              space.
+            </p>
+            <div class="card-actions">
+              <button
+                class="btn-preview"
+                onclick="openPreview('cosmic')"
+                id="btn-preview-cosmic"
+              >
+                ⤢ Preview
+              </button>
+              <button
+                class="btn-download"
+                onclick="downloadWallpaper('cosmic')"
+                id="btn-download-cosmic"
+              >
+                ↓ Download
+              </button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Card 3: Aurora -->
+        <article class="clock-card" id="card-aurora" data-theme="aurora">
+          <div class="card-preview">
+            <canvas
+              class="preview-canvas"
+              id="preview-aurora"
+              width="280"
+              height="180"
+            ></canvas>
+          </div>
+          <div class="card-info">
+            <div class="card-badge aurora-badge">
+              <span class="live-dot"></span>Aurora
+            </div>
+            <h3>Aurora Borealis</h3>
+            <p>
+              Flowing northern lights in vivid greens and purples with crisp
+              time display.
+            </p>
+            <div class="card-actions">
+              <button
+                class="btn-preview"
+                onclick="openPreview('aurora')"
+                id="btn-preview-aurora"
+              >
+                ⤢ Preview
+              </button>
+              <button
+                class="btn-download"
+                onclick="downloadWallpaper('aurora')"
+                id="btn-download-aurora"
+              >
+                ↓ Download
+              </button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Card 4: Matrix -->
+        <article class="clock-card" id="card-matrix" data-theme="matrix">
+          <div class="card-preview">
+            <canvas
+              class="preview-canvas"
+              id="preview-matrix"
+              width="280"
+              height="180"
+            ></canvas>
+          </div>
+          <div class="card-info">
+            <div class="card-badge matrix-badge">
+              <span class="live-dot"></span>Matrix
+            </div>
+            <h3>Digital Rain</h3>
+            <p>
+              Classic green matrix code rain with bold digital time overlay.
+            </p>
+            <div class="card-actions">
+              <button
+                class="btn-preview"
+                onclick="openPreview('matrix')"
+                id="btn-preview-matrix"
+              >
+                ⤢ Preview
+              </button>
+              <button
+                class="btn-download"
+                onclick="downloadWallpaper('matrix')"
+                id="btn-download-matrix"
+              >
+                ↓ Download
+              </button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Card 5: Minimal Zen -->
+        <article class="clock-card" id="card-zen" data-theme="zen">
+          <div class="card-preview">
+            <canvas
+              class="preview-canvas"
+              id="preview-zen"
+              width="280"
+              height="180"
+            ></canvas>
+          </div>
+          <div class="card-info">
+            <div class="card-badge zen-badge">
+              <span class="live-dot"></span>Minimal
+            </div>
+            <h3>Minimal Zen</h3>
+            <p>
+              Clean analog clock with breathing gradients and whisper-thin
+              hands.
+            </p>
+            <div class="card-actions">
+              <button
+                class="btn-preview"
+                onclick="openPreview('zen')"
+                id="btn-preview-zen"
+              >
+                ⤢ Preview
+              </button>
+              <button
+                class="btn-download"
+                onclick="downloadWallpaper('zen')"
+                id="btn-download-zen"
+              >
+                ↓ Download
+              </button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Card 6: Retro Flip -->
+        <article class="clock-card" id="card-retro" data-theme="retro">
+          <div class="card-preview">
+            <canvas
+              class="preview-canvas"
+              id="preview-retro"
+              width="280"
+              height="180"
+            ></canvas>
+          </div>
+          <div class="card-info">
+            <div class="card-badge retro-badge">
+              <span class="live-dot"></span>Retro
+            </div>
+            <h3>Retro Flip</h3>
+            <p>
+              Vintage split-flap display with warm amber lighting and film
+              grain.
+            </p>
+            <div class="card-actions">
+              <button
+                class="btn-preview"
+                onclick="openPreview('retro')"
+                id="btn-preview-retro"
+              >
+                ⤢ Preview
+              </button>
+              <button
+                class="btn-download"
+                onclick="downloadWallpaper('retro')"
+                id="btn-download-retro"
+              >
+                ↓ Download
+              </button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Card 7: Holographic -->
+        <article class="clock-card" id="card-holo" data-theme="holo">
+          <div class="card-preview">
+            <canvas
+              class="preview-canvas"
+              id="preview-holo"
+              width="280"
+              height="180"
+            ></canvas>
+          </div>
+          <div class="card-info">
+            <div class="card-badge holo-badge">
+              <span class="live-dot"></span>Holo
+            </div>
+            <h3>Holographic</h3>
+            <p>
+              Futuristic HUD with scanlines, prismatic glow, and floating hex
+              data.
+            </p>
+            <div class="card-actions">
+              <button
+                class="btn-preview"
+                onclick="openPreview('holo')"
+                id="btn-preview-holo"
+              >
+                ⤢ Preview
+              </button>
+              <button
+                class="btn-download"
+                onclick="downloadWallpaper('holo')"
+                id="btn-download-holo"
+              >
+                ↓ Download
+              </button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Card 8: Crystal Bloom -->
+        <article class="clock-card" id="card-crystal" data-theme="crystal">
+          <div class="card-preview">
+            <canvas
+              class="preview-canvas"
+              id="preview-crystal"
+              width="280"
+              height="180"
+            ></canvas>
+          </div>
+          <div class="card-info">
+            <div class="card-badge aurora-badge">
+              <span class="live-dot"></span>Crystal
+            </div>
+            <h3>Crystal Bloom</h3>
+            <p>
+              Iridescent glass petals and shimmer particles in a deep purple
+              bloom.
+            </p>
+            <div class="card-actions">
+              <button
+                class="btn-preview"
+                onclick="openPreview('crystal')"
+                id="btn-preview-crystal"
+              >
+                ⤢ Preview
+              </button>
+              <button
+                class="btn-download"
+                onclick="downloadWallpaper('crystal')"
+                id="btn-download-crystal"
+              >
+                ↓ Download
+              </button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Card 9: Midnight Luxe -->
+        <article class="clock-card" id="card-luxe" data-theme="luxe">
+          <div class="card-preview">
+            <canvas
+              class="preview-canvas"
+              id="preview-luxe"
+              width="280"
+              height="180"
+            ></canvas>
+          </div>
+          <div class="card-info">
+            <div class="card-badge luxe-badge">
+              <span class="live-dot"></span>Luxe
+            </div>
+            <h3>Midnight Luxe</h3>
+            <p>
+              Elegant analog face with sweeping gold hands on a brushed metal
+              midnight background.
+            </p>
+            <div class="card-actions">
+              <button
+                class="btn-preview"
+                onclick="openPreview('luxe')"
+                id="btn-preview-luxe"
+              >
+                ⤢ Preview
+              </button>
+              <button
+                class="btn-download"
+                onclick="downloadWallpaper('luxe')"
+                id="btn-download-luxe"
+              >
+                ↓ Download
+              </button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Card 10: Ocean Depths -->
+        <article class="clock-card" id="card-ocean" data-theme="ocean">
+          <div class="card-preview">
+            <canvas
+              class="preview-canvas"
+              id="preview-ocean"
+              width="280"
+              height="180"
+            ></canvas>
+          </div>
+          <div class="card-info">
+            <div class="card-badge ocean-badge">
+              <span class="live-dot"></span>Ocean
+            </div>
+            <h3>Ocean Depths</h3>
+            <p>
+              Fluid underwater ripples with minimalist analog hands and coral
+              accents.
+            </p>
+            <div class="card-actions">
+              <button
+                class="btn-preview"
+                onclick="openPreview('ocean')"
+                id="btn-preview-ocean"
+              >
+                ⤢ Preview
+              </button>
+              <button
+                class="btn-download"
+                onclick="downloadWallpaper('ocean')"
+                id="btn-download-ocean"
+              >
+                ↓ Download
+              </button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Card 11: Steampunk -->
+        <article class="clock-card" id="card-steam" data-theme="steam">
+          <div class="card-preview">
+            <canvas
+              class="preview-canvas"
+              id="preview-steam"
+              width="280"
+              height="180"
+            ></canvas>
+          </div>
+          <div class="card-info">
+            <div class="card-badge steam-badge">
+              <span class="live-dot"></span>Steampunk
+            </div>
+            <h3>Brass Gears</h3>
+            <p>
+              Intricate rotating gears and brass analog hands in a classic
+              steampunk style.
+            </p>
+            <div class="card-actions">
+              <button
+                class="btn-preview"
+                onclick="openPreview('steam')"
+                id="btn-preview-steam"
+              >
+                ⤢ Preview
+              </button>
+              <button
+                class="btn-download"
+                onclick="downloadWallpaper('steam')"
+                id="btn-download-steam"
+              >
+                ↓ Download
+              </button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Card 12: Sakura -->
+        <article class="clock-card" id="card-sakura" data-theme="sakura">
+          <div class="card-preview">
+            <canvas
+              class="preview-canvas"
+              id="preview-sakura"
+              width="280"
+              height="180"
+            ></canvas>
+          </div>
+          <div class="card-info">
+            <div class="card-badge sakura-badge">
+              <span class="live-dot"></span>Sakura
+            </div>
+            <h3>Cherry Blossom</h3>
+            <p>
+              Falling sakura petals and a delicate paper-textured analog face.
+            </p>
+            <div class="card-actions">
+              <button
+                class="btn-preview"
+                onclick="openPreview('sakura')"
+                id="btn-preview-sakura"
+              >
+                ⤢ Preview
+              </button>
+              <button
+                class="btn-download"
+                onclick="downloadWallpaper('sakura')"
+                id="btn-download-sakura"
+              >
+                ↓ Download
+              </button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Card 13: Aviator Dash -->
+        <article class="clock-card" id="card-aviator" data-theme="aviator">
+          <div class="card-preview">
+            <canvas
+              class="preview-canvas"
+              id="preview-aviator"
+              width="280"
+              height="180"
+            ></canvas>
+          </div>
+          <div class="card-info">
+            <div class="card-badge steam-badge">
+              <span class="live-dot"></span>Aviator
+            </div>
+            <h3>Aviator Dash</h3>
+            <p>
+              High contrast matte instrument panel dial with glowing hands and
+              markers.
+            </p>
+            <div class="card-actions">
+              <button
+                class="btn-preview"
+                onclick="openPreview('aviator')"
+                id="btn-preview-aviator"
+              >
+                ⤢ Preview
+              </button>
+              <button
+                class="btn-download"
+                onclick="downloadWallpaper('aviator')"
+                id="btn-download-aviator"
+              >
+                ↓ Download
+              </button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Card 14: Swiss Station -->
+        <article class="clock-card" id="card-swiss" data-theme="swiss">
+          <div class="card-preview">
+            <canvas
+              class="preview-canvas"
+              id="preview-swiss"
+              width="280"
+              height="180"
+            ></canvas>
+          </div>
+          <div class="card-info">
+            <div class="card-badge zen-badge">
+              <span class="live-dot"></span>Swiss
+            </div>
+            <h3>Swiss Station</h3>
+            <p>
+              Classic minimalist railway clock layout with a bright red sweeping
+              second hand.
+            </p>
+            <div class="card-actions">
+              <button
+                class="btn-preview"
+                onclick="openPreview('swiss')"
+                id="btn-preview-swiss"
+              >
+                ⤢ Preview
+              </button>
+              <button
+                class="btn-download"
+                onclick="downloadWallpaper('swiss')"
+                id="btn-download-swiss"
+              >
+                ↓ Download
+              </button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Card 15: Cyber Glitch -->
+        <article class="clock-card" id="card-cyber" data-theme="cyber">
+          <div class="card-preview">
+            <canvas
+              class="preview-canvas"
+              id="preview-cyber"
+              width="280"
+              height="180"
+            ></canvas>
+          </div>
+          <div class="card-info">
+            <div class="card-badge cyber-badge">
+              <span class="live-dot"></span>Cyber
+            </div>
+            <h3>Cyber Glitch</h3>
+            <p>
+              Distorted neon digits with flickering glitch effects and digital
+              scanning lines.
+            </p>
+            <div class="card-actions">
+              <button
+                class="btn-preview"
+                onclick="openPreview('cyber')"
+                id="btn-preview-cyber"
+              >
+                ⤢ Preview
+              </button>
+              <button
+                class="btn-download"
+                onclick="downloadWallpaper('cyber')"
+                id="btn-download-cyber"
+              >
+                ↓ Download
+              </button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Card 16: Solar Eclipse -->
+        <article class="clock-card" id="card-solar" data-theme="solar">
+          <div class="card-preview">
+            <canvas
+              class="preview-canvas"
+              id="preview-solar"
+              width="280"
+              height="180"
+            ></canvas>
+          </div>
+          <div class="card-info">
+            <div class="card-badge cosmic-badge">
+              <span class="live-dot"></span>Eclipse
+            </div>
+            <h3>Solar Eclipse</h3>
+            <p>
+              Minimalist glowing corona with a central dark orb and light-beam
+              hands.
+            </p>
+            <div class="card-actions">
+              <button
+                class="btn-preview"
+                onclick="openPreview('solar')"
+                id="btn-preview-solar"
+              >
+                ⤢ Preview
+              </button>
+              <button
+                class="btn-download"
+                onclick="downloadWallpaper('solar')"
+                id="btn-download-solar"
+              >
+                ↓ Download
+              </button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Card 17: Radar Pulse -->
+        <article class="clock-card" id="card-radar" data-theme="radar">
+          <div class="card-preview">
+            <canvas
+              class="preview-canvas"
+              id="preview-radar"
+              width="280"
+              height="180"
+            ></canvas>
+          </div>
+          <div class="card-info">
+            <div class="card-badge radar-badge">
+              <span class="live-dot"></span>Radar
+            </div>
+            <h3>Radar Sweep</h3>
+            <p>
+              Tactical military-style radar scan with glowing blips and a dark
+              HUD frame.
+            </p>
+            <div class="card-actions">
+              <button
+                class="btn-preview"
+                onclick="openPreview('radar')"
+                id="btn-preview-radar"
+              >
+                ⤢ Preview
+              </button>
+              <button
+                class="btn-download"
+                onclick="downloadWallpaper('radar')"
+                id="btn-download-radar"
+              >
+                ↓ Download
+              </button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Card 18: Binary Rain -->
+        <article class="clock-card" id="card-binary" data-theme="binary">
+          <div class="card-preview">
+            <canvas
+              class="preview-canvas"
+              id="preview-binary"
+              width="280"
+              height="180"
+            ></canvas>
+          </div>
+          <div class="card-info">
+            <div class="card-badge cyan-badge">
+              <span class="live-dot"></span>Binary
+            </div>
+            <h3>Binary Rain</h3>
+            <p>
+              Falling zeroes and ones in electric cyan with a hacker terminal
+              readout.
+            </p>
+            <div class="card-actions">
+              <button
+                class="btn-preview"
+                onclick="openPreview('binary')"
+                id="btn-preview-binary"
+              >
+                ⤢ Preview
+              </button>
+              <button
+                class="btn-download"
+                onclick="downloadWallpaper('binary')"
+                id="btn-download-binary"
+              >
+                ↓ Download
+              </button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Card 19: Molten Core -->
+        <article class="clock-card" id="card-molten" data-theme="molten">
+          <div class="card-preview">
+            <canvas
+              class="preview-canvas"
+              id="preview-molten"
+              width="280"
+              height="180"
+            ></canvas>
+          </div>
+          <div class="card-info">
+            <div class="card-badge molten-badge">
+              <span class="live-dot"></span>Molten
+            </div>
+            <h3>Cracked Magma</h3>
+            <p>
+              Glowing lava pulsing through obsidian cracks with burning ember
+              particles.
+            </p>
+            <div class="card-actions">
+              <button
+                class="btn-preview"
+                onclick="openPreview('molten')"
+                id="btn-preview-molten"
+              >
+                ⤢ Preview
+              </button>
+              <button
+                class="btn-download"
+                onclick="downloadWallpaper('molten')"
+                id="btn-download-molten"
+              >
+                ↓ Download
+              </button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Card 20: Circuit Board -->
+        <article class="clock-card" id="card-circuit" data-theme="circuit">
+          <div class="card-preview">
+            <canvas
+              class="preview-canvas"
+              id="preview-circuit"
+              width="280"
+              height="180"
+            ></canvas>
+          </div>
+          <div class="card-info">
+            <div class="card-badge circuit-badge">
+              <span class="live-dot"></span>Circuit
+            </div>
+            <h3>Mainboard Glow</h3>
+            <p>
+              Intricate glowing circuit traces and pulsing logic chips in
+              emerald green.
+            </p>
+            <div class="card-actions">
+              <button
+                class="btn-preview"
+                onclick="openPreview('circuit')"
+                id="btn-preview-circuit"
+              >
+                ⤢ Preview
+              </button>
+              <button
+                class="btn-download"
+                onclick="downloadWallpaper('circuit')"
+                id="btn-download-circuit"
+              >
+                ↓ Download
+              </button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Card 21: Night City -->
+        <article class="clock-card" id="card-city" data-theme="city">
+          <div class="card-preview">
+            <canvas
+              class="preview-canvas"
+              id="preview-city"
+              width="280"
+              height="180"
+            ></canvas>
+          </div>
+          <div class="card-info">
+            <div class="card-badge city-badge">
+              <span class="live-dot"></span>City
+            </div>
+            <h3>Synthwave Nights</h3>
+            <p>
+              Neon city silhouette beneath a retro sun with vibrant purple
+              gradients.
+            </p>
+            <div class="card-actions">
+              <button
+                class="btn-preview"
+                onclick="openPreview('city')"
+                id="btn-preview-city"
+              >
+                ⤢ Preview
+              </button>
+              <button
+                class="btn-download"
+                onclick="downloadWallpaper('city')"
+                id="btn-download-city"
+              >
+                ↓ Download
+              </button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Card 22: Void Watcher -->
+        <article class="clock-card" id="card-void" data-theme="void">
+          <div class="card-preview">
+            <canvas
+              class="preview-canvas"
+              id="preview-void"
+              width="280"
+              height="180"
+            ></canvas>
+          </div>
+          <div class="card-info">
+            <div class="card-badge void-badge">
+              <span class="live-dot"></span>Void
+            </div>
+            <h3>The Watcher</h3>
+            <p>
+              Eldritch eye that follows the time, surrounded by shifting dark
+              mists.
+            </p>
+            <div class="card-actions">
+              <button
+                class="btn-preview"
+                onclick="openPreview('void')"
+                id="btn-preview-void"
+              >
+                ⤢ Preview
+              </button>
+              <button
+                class="btn-download"
+                onclick="downloadWallpaper('void')"
+                id="btn-download-void"
+              >
+                ↓ Download
+              </button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Card 23: Deep Sea -->
+        <article class="clock-card" id="card-sea" data-theme="sea">
+          <div class="card-preview">
+            <canvas
+              class="preview-canvas"
+              id="preview-sea"
+              width="280"
+              height="180"
+            ></canvas>
+          </div>
+          <div class="card-info">
+            <div class="card-badge ocean-badge">
+              <span class="live-dot"></span>Deep Sea
+            </div>
+            <h3>Luminescent Abyss</h3>
+            <p>
+              Bioluminescent ripples and ghostly depth reflections from the
+              ocean floor.
+            </p>
+            <div class="card-actions">
+              <button
+                class="btn-preview"
+                onclick="openPreview('sea')"
+                id="btn-preview-sea"
+              >
+                ⤢ Preview
+              </button>
+              <button
+                class="btn-download"
+                onclick="downloadWallpaper('sea')"
+                id="btn-download-sea"
+              >
+                ↓ Download
+              </button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Card 24: Infinity Mirror -->
+        <article class="clock-card" id="card-infinity" data-theme="infinity">
+          <div class="card-preview">
+            <canvas
+              class="preview-canvas"
+              id="preview-infinity"
+              width="280"
+              height="180"
+            ></canvas>
+          </div>
+          <div class="card-info">
+            <div class="card-badge luxe-badge">
+              <span class="live-dot"></span>Depth
+            </div>
+            <h3>Infinity Loop</h3>
+            <p>
+              Recursive neon reflections spanning into an infinite dark tunnel.
+            </p>
+            <div class="card-actions">
+              <button
+                class="btn-preview"
+                onclick="openPreview('infinity')"
+                id="btn-preview-infinity"
+              >
+                ⤢ Preview
+              </button>
+              <button
+                class="btn-download"
+                onclick="downloadWallpaper('infinity')"
+                id="btn-download-infinity"
+              >
+                ↓ Download
+              </button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Card 25: Prism Core -->
+        <article class="clock-card" id="card-prism" data-theme="prism">
+          <div class="card-preview">
+            <canvas
+              class="preview-canvas"
+              id="preview-prism"
+              width="280"
+              height="180"
+            ></canvas>
+          </div>
+          <div class="card-info">
+            <div class="card-badge cosmic-badge">
+              <span class="live-dot"></span>Geometric
+            </div>
+            <h3>Prism Core</h3>
+            <p>
+              Shifting geometric crystal with vibrant light scattering and deep
+              space vibes.
+            </p>
+            <div class="card-actions">
+              <button
+                class="btn-preview"
+                onclick="openPreview('prism')"
+                id="btn-preview-prism"
+              >
+                ⤢ Preview
+              </button>
+              <button
+                class="btn-download"
+                onclick="downloadWallpaper('prism')"
+                id="btn-download-prism"
+              >
+                ↓ Download
+              </button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Card 26: Plasma Storm -->
+        <article class="clock-card" id="card-plasma" data-theme="plasma">
+          <div class="card-preview">
+            <canvas
+              class="preview-canvas"
+              id="preview-plasma"
+              width="280"
+              height="180"
+            ></canvas>
+          </div>
+          <div class="card-info">
+            <div class="card-badge cyber-badge">
+              <span class="live-dot"></span>Plasma
+            </div>
+            <h3>Plasma Storm</h3>
+            <p>
+              Fluid plasma energy with magnetic lightning and vibrant electric
+              hues.
+            </p>
+            <div class="card-actions">
+              <button
+                class="btn-preview"
+                onclick="openPreview('plasma')"
+                id="btn-preview-plasma"
+              >
+                ⤢ Preview
+              </button>
+              <button
+                class="btn-download"
+                onclick="downloadWallpaper('plasma')"
+                id="btn-download-plasma"
+              >
+                ↓ Download
+              </button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Card 27: Star Dust -->
+        <article class="clock-card" id="card-stardust" data-theme="stardust">
+          <div class="card-preview">
+            <canvas
+              class="preview-canvas"
+              id="preview-stardust"
+              width="280"
+              height="180"
+            ></canvas>
+          </div>
+          <div class="card-info">
+            <div class="card-badge cosmic-badge">
+              <span class="live-dot"></span>Stellar
+            </div>
+            <h3>Star Dust</h3>
+            <p>
+              Gentle drifting star particles forming a ethereal time display in
+              the void.
+            </p>
+            <div class="card-actions">
+              <button
+                class="btn-preview"
+                onclick="openPreview('stardust')"
+                id="btn-preview-stardust"
+              >
+                ⤢ Preview
+              </button>
+              <button
+                class="btn-download"
+                onclick="downloadWallpaper('stardust')"
+                id="btn-download-stardust"
+              >
+                ↓ Download
+              </button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Card 28: Paper Cut -->
+        <article class="clock-card" id="card-paper" data-theme="paper">
+          <div class="card-preview">
+            <canvas
+              class="preview-canvas"
+              id="preview-paper"
+              width="280"
+              height="180"
+            ></canvas>
+          </div>
+          <div class="card-info">
+            <div class="card-badge zen-badge">
+              <span class="live-dot"></span>Craft
+            </div>
+            <h3>Paper Cut</h3>
+            <p>
+              Minimalist layered paper aesthetic with soft shadows and crisp
+              typography.
+            </p>
+            <div class="card-actions">
+              <button
+                class="btn-preview"
+                onclick="openPreview('paper')"
+                id="btn-preview-paper"
+              >
+                ⤢ Preview
+              </button>
+              <button
+                class="btn-download"
+                onclick="downloadWallpaper('paper')"
+                id="btn-download-paper"
+              >
+                ↓ Download
+              </button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Card 29: Glitch Tokyo -->
+        <article class="clock-card" id="card-tokyo" data-theme="tokyo">
+          <div class="card-preview">
+            <canvas
+              class="preview-canvas"
+              id="preview-tokyo"
+              width="280"
+              height="180"
+            ></canvas>
+          </div>
+          <div class="card-info">
+            <div class="card-badge cyber-badge">
+              <span class="live-dot"></span>Urban
+            </div>
+            <h3>Glitch Tokyo</h3>
+            <p>
+              Hyper-detailed urban cyberpunk glitch with Kanji elements and neon
+              chaos.
+            </p>
+            <div class="card-actions">
+              <button
+                class="btn-preview"
+                onclick="openPreview('tokyo')"
+                id="btn-preview-tokyo"
+              >
+                ⤢ Preview
+              </button>
+              <button
+                class="btn-download"
+                onclick="downloadWallpaper('tokyo')"
+                id="btn-download-tokyo"
+              >
+                ↓ Download
+              </button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Card 30: Arctic Frost -->
+        <article class="clock-card" id="card-arctic" data-theme="arctic">
+          <div class="card-preview">
+            <canvas
+              class="preview-canvas"
+              id="preview-arctic"
+              width="280"
+              height="180"
+            ></canvas>
+          </div>
+          <div class="card-info">
+            <div class="card-badge ocean-badge">
+              <span class="live-dot"></span>Frozen
+            </div>
+            <h3>Arctic Frost</h3>
+            <p>
+              Frozen glass effects with drifting snow particles and a chill
+              arctic sync.
+            </p>
+            <div class="card-actions">
+              <button
+                class="btn-preview"
+                onclick="openPreview('arctic')"
+                id="btn-preview-arctic"
+              >
+                ⤢ Preview
+              </button>
+              <button
+                class="btn-download"
+                onclick="downloadWallpaper('arctic')"
+                id="btn-download-arctic"
+              >
+                ↓ Download
+              </button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Card 31: Golden Hour -->
+        <article class="clock-card" id="card-gold" data-theme="gold">
+          <div class="card-preview">
+            <canvas
+              class="preview-canvas"
+              id="preview-gold"
+              width="280"
+              height="180"
+            ></canvas>
+          </div>
+          <div class="card-info">
+            <div class="card-badge gold-badge">
+              <span class="live-dot"></span>Luxury
+            </div>
+            <h3>Golden Hour</h3>
+            <p>
+              Exquisite marble dial with gold-plated hands and warm cinematic
+              lighting.
+            </p>
+            <div class="card-actions">
+              <button
+                class="btn-preview"
+                onclick="openPreview('gold')"
+                id="btn-preview-gold"
+              >
+                ⤢ Preview
+              </button>
+              <button
+                class="btn-download"
+                onclick="downloadWallpaper('gold')"
+                id="btn-download-gold"
+              >
+                ↓ Download
+              </button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Card 32: Nebula Bloom -->
+        <article class="clock-card" id="card-nebula" data-theme="nebula">
+          <div class="card-preview">
+            <canvas
+              class="preview-canvas"
+              id="preview-nebula"
+              width="280"
+              height="180"
+            ></canvas>
+          </div>
+          <div class="card-info">
+            <div class="card-badge fluid-badge">
+              <span class="live-dot"></span>Fluid
+            </div>
+            <h3>Nebula Bloom</h3>
+            <p>
+              Organic moving blobs in a deep space nebula with clean modern time
+              display.
+            </p>
+            <div class="card-actions">
+              <button
+                class="btn-preview"
+                onclick="openPreview('nebula')"
+                id="btn-preview-nebula"
+              >
+                ⤢ Preview
+              </button>
+              <button
+                class="btn-download"
+                onclick="downloadWallpaper('nebula')"
+                id="btn-download-nebula"
+              >
+                ↓ Download
+              </button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Card 33: Geometric Bloom -->
+        <article class="clock-card" id="card-bloom" data-theme="bloom">
+          <div class="card-preview">
+            <canvas
+              class="preview-canvas"
+              id="preview-bloom"
+              width="280"
+              height="180"
+            ></canvas>
+          </div>
+          <div class="card-info">
+            <div class="card-badge bloom-badge">
+              <span class="live-dot"></span>Artistic
+            </div>
+            <h3>Geometric Bloom</h3>
+            <p>
+              A multi-layered flower that breathes and rotates in a deep purple
+              void.
+            </p>
+            <div class="card-actions">
+              <button
+                class="btn-preview"
+                onclick="openPreview('bloom')"
+                id="btn-preview-bloom"
+              >
+                ⤢ Preview
+              </button>
+              <button
+                class="btn-download"
+                onclick="downloadWallpaper('bloom')"
+                id="btn-download-bloom"
+              >
+                ↓ Download
+              </button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Card 34: Synthwave Sunset -->
+        <article class="clock-card" id="card-synthwave" data-theme="synthwave">
+          <div class="card-preview">
+            <canvas
+              class="preview-canvas"
+              id="preview-synthwave"
+              width="280"
+              height="180"
+            ></canvas>
+          </div>
+          <div class="card-info">
+            <div class="card-badge synthwave-badge">
+              <span class="live-dot"></span>Retro
+            </div>
+            <h3>Synthwave Sunset</h3>
+            <p>
+              80s retro grid and sliced sun with vibrant purple and neon pink
+              aesthetics.
+            </p>
+            <div class="card-actions">
+              <button
+                class="btn-preview"
+                onclick="openPreview('synthwave')"
+                id="btn-preview-synthwave"
+              >
+                ⤢ Preview
+              </button>
+              <button
+                class="btn-download"
+                onclick="downloadWallpaper('synthwave')"
+                id="btn-download-synthwave"
+              >
+                ↓ Download
+              </button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Card 35: Quantum Vortex -->
+        <article class="clock-card" id="card-vortex" data-theme="vortex">
+          <div class="card-preview">
+            <canvas
+              class="preview-canvas"
+              id="preview-vortex"
+              width="280"
+              height="180"
+            ></canvas>
+          </div>
+          <div class="card-info">
+            <div class="card-badge vortex-badge">
+              <span class="live-dot"></span>Quantum
+            </div>
+            <h3>Quantum Vortex</h3>
+            <p>
+              A hypnotic swirling vortex of energy particles forming an ethereal
+              analog face.
+            </p>
+            <div class="card-actions">
+              <button
+                class="btn-preview"
+                onclick="openPreview('vortex')"
+                id="btn-preview-vortex"
+              >
+                ⤢ Preview
+              </button>
+              <button
+                class="btn-download"
+                onclick="downloadWallpaper('vortex')"
+                id="btn-download-vortex"
+              >
+                ↓ Download
+              </button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Card 36: Emerald Forest -->
+        <article class="clock-card" id="card-forest" data-theme="forest">
+          <div class="card-preview">
+            <canvas
+              class="preview-canvas"
+              id="preview-forest"
+              width="280"
+              height="180"
+            ></canvas>
+          </div>
+          <div class="card-info">
+            <div class="card-badge forest-badge">
+              <span class="live-dot"></span>Nature
+            </div>
+            <h3>Emerald Forest</h3>
+            <p>
+              Organic breathing leaf shapes and deep forest gradients with
+              minimalist analog hands.
+            </p>
+            <div class="card-actions">
+              <button
+                class="btn-preview"
+                onclick="openPreview('forest')"
+                id="btn-preview-forest"
+              >
+                ⤢ Preview
+              </button>
+              <button
+                class="btn-download"
+                onclick="downloadWallpaper('forest')"
+                id="btn-download-forest"
+              >
+                ↓ Download
+              </button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Card 37: Quantum Pulse -->
+        <article class="clock-card" id="card-quantum" data-theme="quantum">
+          <div class="card-preview">
+            <canvas
+              class="preview-canvas"
+              id="preview-quantum"
+              width="280"
+              height="180"
+            ></canvas>
+          </div>
+          <div class="card-info">
+            <div class="card-badge quantum-badge">
+              <span class="live-dot"></span>Theoretical Physics
+            </div>
+            <h3>Schrödinger's Pulse</h3>
+            <p>
+              Superposition time display over probability wave functions and
+              fluctuating quantum particles.
+            </p>
+            <div class="card-actions">
+              <button
+                class="btn-preview"
+                onclick="openPreview('quantum')"
+                id="btn-preview-quantum"
+              >
+                ⤢ Preview
+              </button>
+              <button
+                class="btn-download"
+                onclick="downloadWallpaper('quantum')"
+                id="btn-download-quantum"
+              >
+                ↓ Download
+              </button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Card 38: Mecha Core -->
+        <article class="clock-card" id="card-robotics" data-theme="robotics">
+          <div class="card-preview">
+            <canvas
+              class="preview-canvas"
+              id="preview-robotics"
+              width="280"
+              height="180"
+            ></canvas>
+          </div>
+          <div class="card-info">
+            <div class="card-badge robotics-badge">
+              <span class="live-dot"></span>Robotics
+            </div>
+            <h3>Mecha Core</h3>
+            <p>
+              Industrial mechanical hub with diagnostic sensor arrays and
+              scanning laser arrays.
+            </p>
+            <div class="card-actions">
+              <button
+                class="btn-preview"
+                onclick="openPreview('robotics')"
+                id="btn-preview-robotics"
+              >
+                ⤢ Preview
+              </button>
+              <button
+                class="btn-download"
+                onclick="downloadWallpaper('robotics')"
+                id="btn-download-robotics"
+              >
+                ↓ Download
+              </button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Card 39: Event Horizon -->
+        <article class="clock-card" id="card-horizon" data-theme="horizon">
+          <div class="card-preview">
+            <canvas
+              class="preview-canvas"
+              id="preview-horizon"
+              width="280"
+              height="180"
+            ></canvas>
+          </div>
+          <div class="card-info">
+            <div class="card-badge void-badge">
+              <span class="live-dot"></span>Astrophysics
+            </div>
+            <h3>Event Horizon</h3>
+            <p>
+              Black hole simulation with accretion disk, gravitational lensing,
+              and relativistic time dilation.
+            </p>
+            <div class="card-actions">
+              <button
+                class="btn-preview"
+                onclick="openPreview('horizon')"
+                id="btn-preview-horizon"
+              >
+                ⤢ Preview
+              </button>
+              <button
+                class="btn-download"
+                onclick="downloadWallpaper('horizon')"
+                id="btn-download-horizon"
+              >
+                ↓ Download
+              </button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Card 40: Neon Arc -->
+        <article class="clock-card" id="card-neonarc" data-theme="neonarc">
+          <div class="card-preview">
+            <canvas
+              class="preview-canvas"
+              id="preview-neonarc"
+              width="280"
+              height="180"
+            ></canvas>
+          </div>
+          <div class="card-info">
+            <div class="card-badge neonarc-badge">
+              <span class="live-dot"></span>Analog
+            </div>
+            <h3>Neon Arc</h3>
+            <p>
+              Glowing neon progress rings on a deep purple field with floating
+              magenta particles.
+            </p>
+            <div class="card-actions">
+              <button
+                class="btn-preview"
+                onclick="openPreview('neonarc')"
+                id="btn-preview-neonarc"
+              >
+                ⤢ Preview
+              </button>
+              <button
+                class="btn-download"
+                onclick="downloadWallpaper('neonarc')"
+                id="btn-download-neonarc"
+              >
+                ↓ Download
+              </button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Card 41: Solar Wind -->
+        <article class="clock-card" id="card-solarwind" data-theme="solarwind">
+          <div class="card-preview">
+            <canvas
+              class="preview-canvas"
+              id="preview-solarwind"
+              width="280"
+              height="180"
+            ></canvas>
+          </div>
+          <div class="card-info">
+            <div class="card-badge solarwind-badge">
+              <span class="live-dot"></span>Analog
+            </div>
+            <h3>Solar Wind</h3>
+            <p>
+              A blazing solar disk with animated corona rays and dark precision
+              hands against deep space.
+            </p>
+            <div class="card-actions">
+              <button
+                class="btn-preview"
+                onclick="openPreview('solarwind')"
+                id="btn-preview-solarwind"
+              >
+                ⤢ Preview
+              </button>
+              <button
+                class="btn-download"
+                onclick="downloadWallpaper('solarwind')"
+                id="btn-download-solarwind"
+              >
+                ↓ Download
+              </button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Card 42: Cyber Terminal -->
+        <article class="clock-card" id="card-terminal" data-theme="terminal">
+          <div class="card-preview">
+            <canvas
+              class="preview-canvas"
+              id="preview-terminal"
+              width="280"
+              height="180"
+            ></canvas>
+          </div>
+          <div class="card-info">
+            <div class="card-badge terminal-badge">
+              <span class="live-dot"></span>Digital
+            </div>
+            <h3>Cyber Terminal</h3>
+            <p>
+              Hacker-style OS terminal with scrolling system logs, scanlines,
+              and vivid green time display.
+            </p>
+            <div class="card-actions">
+              <button
+                class="btn-preview"
+                onclick="openPreview('terminal')"
+                id="btn-preview-terminal"
+              >
+                ⤢ Preview
+              </button>
+              <button
+                class="btn-download"
+                onclick="downloadWallpaper('terminal')"
+                id="btn-download-terminal"
+              >
+                ↓ Download
+              </button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Card 43: Glassmorphic -->
+        <article class="clock-card" id="card-glass" data-theme="glass">
+          <div class="card-preview">
+            <canvas
+              class="preview-canvas"
+              id="preview-glass"
+              width="280"
+              height="180"
+            ></canvas>
+          </div>
+          <div class="card-info">
+            <div class="card-badge glass-badge">
+              <span class="live-dot"></span>Digital
+            </div>
+            <h3>Glassmorphic</h3>
+            <p>
+              Frosted glass panel over animated gradient orbs with a chromatic
+              time display and seconds bar.
+            </p>
+            <div class="card-actions">
+              <button
+                class="btn-preview"
+                onclick="openPreview('glass')"
+                id="btn-preview-glass"
+              >
+                ⤢ Preview
+              </button>
+              <button
+                class="btn-download"
+                onclick="downloadWallpaper('glass')"
+                id="btn-download-glass"
+              >
+                ↓ Download
+              </button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Card 44: Minimalist Depth -->
+        <article class="clock-card" id="card-mindepth" data-theme="mindepth">
+          <div class="card-preview">
+            <canvas
+              class="preview-canvas"
+              id="preview-mindepth"
+              width="280"
+              height="180"
+            ></canvas>
+          </div>
+          <div class="card-info">
+            <div class="card-badge depth-badge">
+              <span class="live-dot"></span>Modern
+            </div>
+            <h3>Minimalist Depth</h3>
+            <p>
+              Clean digital display with layered depth effects, subtle grid, and
+              soft glowing shadows.
+            </p>
+            <div class="card-actions">
+              <button
+                class="btn-preview"
+                onclick="openPreview('mindepth')"
+                id="btn-preview-mindepth"
+              >
+                ⤢ Preview
+              </button>
+              <button
+                class="btn-download"
+                onclick="downloadWallpaper('mindepth')"
+                id="btn-download-mindepth"
+              >
+                ↓ Download
+              </button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Card 45: Classic Mechanical -->
+        <article class="clock-card" id="card-mecha" data-theme="mecha">
+          <div class="card-preview">
+            <canvas
+              class="preview-canvas"
+              id="preview-mecha"
+              width="280"
+              height="180"
+            ></canvas>
+          </div>
+          <div class="card-info">
+            <div class="card-badge mechanical-badge">
+              <span class="live-dot"></span>Analog
+            </div>
+            <h3>Classic Mechanical</h3>
+            <p>
+              Precision timepiece with burnished gold ring, Roman numerals, and
+              rotating decorative gears.
+            </p>
+            <div class="card-actions">
+              <button
+                class="btn-preview"
+                onclick="openPreview('mecha')"
+                id="btn-preview-mecha"
+              >
+                ⤢ Preview
+              </button>
+              <button
+                class="btn-download"
+                onclick="downloadWallpaper('mecha')"
+                id="btn-download-mecha"
+              >
+                ↓ Download
+              </button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Card 46: Fluid Gradient -->
+        <article class="clock-card" id="card-fluido" data-theme="fluido">
+          <div class="card-preview">
+            <canvas
+              class="preview-canvas"
+              id="preview-fluido"
+              width="280"
+              height="180"
+            ></canvas>
+          </div>
+          <div class="card-info">
+            <div class="card-badge fluid-badge">
+              <span class="live-dot"></span>Analog
+            </div>
+            <h3>Fluid Gradient</h3>
+            <p>
+              Smooth breathing gradients with animated hue cycling and a glowing
+              pulsing center jewel.
+            </p>
+            <div class="card-actions">
+              <button
+                class="btn-preview"
+                onclick="openPreview('fluido')"
+                id="btn-preview-fluido"
+              >
+                ⤢ Preview
+              </button>
+              <button
+                class="btn-download"
+                onclick="downloadWallpaper('fluido')"
+                id="btn-download-fluido"
+              >
+                ↓ Download
+              </button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Card 47: Retro Segment -->
+        <article class="clock-card" id="card-segment" data-theme="segment">
+          <div class="card-preview">
+            <canvas
+              class="preview-canvas"
+              id="preview-segment"
+              width="280"
+              height="180"
+            ></canvas>
+          </div>
+          <div class="card-info">
+            <div class="card-badge segment-badge">
+              <span class="live-dot"></span>Digital
+            </div>
+            <h3>Retro Segment</h3>
+            <p>
+              Classic 70s LED 7-segment display with warm orange glow and warm
+              brown vignette.
+            </p>
+            <div class="card-actions">
+              <button
+                class="btn-preview"
+                onclick="openPreview('segment')"
+                id="btn-preview-segment"
+              >
+                ⤢ Preview
+              </button>
+              <button
+                class="btn-download"
+                onclick="downloadWallpaper('segment')"
+                id="btn-download-segment"
+              >
+                ↓ Download
+              </button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Card 48: Organic Bloom -->
+        <article
+          class="clock-card"
+          id="card-organicbloom"
+          data-theme="organicbloom"
+        >
+          <div class="card-preview">
+            <canvas
+              class="preview-canvas"
+              id="preview-organicbloom"
+              width="280"
+              height="180"
+            ></canvas>
+          </div>
+          <div class="card-info">
+            <div class="card-badge nature-badge">
+              <span class="live-dot"></span>Nature
+            </div>
+            <h3>Organic Bloom</h3>
+            <p>
+              Living flower petals with pulsing organic shapes and minimalist
+              analog hands on dark green.
+            </p>
+            <div class="card-actions">
+              <button
+                class="btn-preview"
+                onclick="openPreview('organicbloom')"
+                id="btn-preview-organicbloom"
+              >
+                ⤢ Preview
+              </button>
+              <button
+                class="btn-download"
+                onclick="downloadWallpaper('organicbloom')"
+                id="btn-download-organicbloom"
+              >
+                ↓ Download
+              </button>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- ============ FEATURES ============ -->
+    <section id="features">
+      <div class="section-header">
+        <div class="section-tag">Features</div>
+        <h2>Why <span class="gradient-text">Prism?</span></h2>
+      </div>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">⏱</div>
+          <h4>Real-Time Sync</h4>
+          <p>
+            Every clock reads your actual PC system time, updated every second
+            with zero lag.
+          </p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🎨</div>
+          <h4>43 Unique Styles</h4>
+          <p>
+            From retro flip-boards to deep space orbits — curated designs for
+            every taste.
+          </p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📥</div>
+          <h4>Instant Download</h4>
+          <p>
+            Grab a high-res static snapshot or open full-screen to use as a live
+            page wallpaper.
+          </p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🖥</div>
+          <h4>Fullscreen Mode</h4>
+          <p>
+            One click to open any clock full-screen — perfect for a second
+            monitor or stream overlay.
+          </p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">⚡</div>
+          <h4>Lightweight</h4>
+          <p>
+            Pure HTML + Canvas. No heavy frameworks, no tracking — blazing fast
+            on any machine.
+          </p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🆓</div>
+          <h4>100% Free</h4>
+          <p>
+            All wallpapers are completely free to use, download, and share. No
+            sign-up required.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ HOW TO USE ============ -->
+    <section id="how">
+      <div class="section-header">
+        <div class="section-tag">How to Use</div>
+        <h2>Set It Up in <span class="gradient-text">3 Steps</span></h2>
+      </div>
+      <div class="steps-row">
+        <div class="step">
+          <div class="step-num">01</div>
+          <h4>Pick a Clock</h4>
+          <p>
+            Browse the gallery above and find the clock style that speaks to
+            you.
+          </p>
+        </div>
+        <div class="step-arrow">→</div>
+        <div class="step">
+          <div class="step-num">02</div>
+          <h4>Open Fullscreen</h4>
+          <p>
+            Click <strong>Preview</strong> to open the clock full-screen on your
+            browser.
+          </p>
+        </div>
+        <div class="step-arrow">→</div>
+        <div class="step">
+          <div class="step-num">03</div>
+          <h4>Set as Wallpaper</h4>
+          <p>
+            Use <strong>Lively Wallpaper</strong> (Windows) or
+            <strong>Wallpaper Engine</strong> to set the URL as a live web
+            wallpaper.
+          </p>
+        </div>
+      </div>
+      <div class="how-tip">
+        <span>💡</span>
+        <span
+          ><strong>Tip:</strong> Use
+          <a
+            href="https://github.com/rocksdanister/lively/releases/download/v2.2.1.0/lively_setup_x86_full_v2210.exe"
+            target="_blank"
+            rel="noopener"
+            >Lively Wallpaper</a
+          >
+          (free, open source) on Windows — just paste the clock's preview URL
+          and it runs live on your desktop!</span
+        >
+      </div>
+    </section>
+
+    <!-- ============ FOOTER ============ -->
+    <footer id="footer">
+      <div class="footer-inner">
+        <div class="footer-logo">
+          <span class="logo-icon">⧖</span>
+          <span class="logo-text">Prism</span>
+        </div>
+        <p class="footer-sub">
+          Time is the most beautiful art. Let it live on your desktop.
+        </p>
+        <div class="footer-live">
+          <span>Your current time: </span>
+          <span id="footerTime" class="footer-time"></span>
+        </div>
+        <p class="footer-copy">© 2026 Prism · Made with ♡ · Free forever</p>
+      </div>
+    </footer>
+
+    <!-- ============ FULLSCREEN MODAL ============ -->
+    <div
+      id="previewModal"
+      class="modal"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Clock Preview"
+    >
+      <div class="modal-controls">
+        <span class="modal-title" id="modalTitle"></span>
+        <div class="modal-btns">
+          <button
+            id="modalDownload"
+            class="modal-btn-dl"
+            onclick="downloadCurrentPreview()"
+          >
+            ↓ Download
+          </button>
+          <button
+            id="modalClose"
+            class="modal-btn-close"
+            onclick="closePreview()"
+            aria-label="Close"
+          >
+            ✕
+          </button>
+        </div>
+      </div>
+      <canvas id="modalCanvas"></canvas>
     </div>
-  </nav>
 
-  <!-- ============ HERO ============ -->
-  <section id="hero">
-    <div class="hero-bg">
-      <div class="hero-orb orb1"></div>
-      <div class="hero-orb orb2"></div>
-      <div class="hero-orb orb3"></div>
-      <canvas id="heroStars"></canvas>
-    </div>
-    <div class="hero-content">
-      <div class="hero-badge">✦ Live Wallpapers • Real Time • Free</div>
-      <h1 class="hero-title">Your Clock.<br/><span class="gradient-text">Your Canvas.</span></h1>
-      <p class="hero-sub">43 stunning animated clock wallpapers synced to your system time. Download, set as wallpaper, and let your desktop come alive.</p>
-      <div class="hero-cta">
-        <a href="#gallery" class="btn-primary">Browse Gallery ↓</a>
-        <a href="#how" class="btn-ghost">How to Use</a>
-      </div>
-      <div class="hero-stats">
-        <div class="stat"><span class="stat-num">43</span><span class="stat-label">Unique Clocks</span></div>
-        <div class="stat-divider"></div>
-        <div class="stat"><span class="stat-num">HD</span><span class="stat-label">Quality</span></div>
-        <div class="stat-divider"></div>
-        <div class="stat"><span class="stat-num">Live</span><span class="stat-label">Real Time</span></div>
-      </div>
-    </div>
-    <!-- Hero Clock Preview -->
-    <div class="hero-clock-wrap">
-      <div class="hero-clock-frame">
-        <canvas id="heroClock" width="340" height="340"></canvas>
-        <div class="hero-clock-label">Cosmic Orbit — Live Preview</div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ============ GALLERY ============ -->
-  <section id="gallery">
-    <div class="section-header">
-      <div class="section-tag">Gallery</div>
-      <h2>Choose Your <span class="gradient-text">Masterpiece</span></h2>
-      <p>Every clock is animated, synced to your system time, and looks incredible on any display.</p>
-    </div>
-    <div class="clock-grid" id="clockGrid">
-
-      <!-- Card 1: Neon Pulse -->
-      <article class="clock-card" id="card-neon" data-theme="neon">
-        <div class="card-preview">
-          <canvas class="preview-canvas" id="preview-neon" width="280" height="180"></canvas>
-        </div>
-        <div class="card-info">
-          <div class="card-badge neon-badge"><span class="live-dot"></span>Neon</div>
-          <h3>Neon Pulse</h3>
-          <p>Electric neon digits with pulsing glow on a dark grid background.</p>
-          <div class="card-actions">
-            <button class="btn-preview" onclick="openPreview('neon')" id="btn-preview-neon">⤢ Preview</button>
-            <button class="btn-download" onclick="downloadWallpaper('neon')" id="btn-download-neon">↓ Download</button>
-          </div>
-        </div>
-      </article>
-
-      <!-- Card 2: Cosmic Orbit -->
-      <article class="clock-card" id="card-cosmic" data-theme="cosmic">
-        <div class="card-preview">
-          <canvas class="preview-canvas" id="preview-cosmic" width="280" height="180"></canvas>
-        </div>
-        <div class="card-info">
-          <div class="card-badge cosmic-badge"><span class="live-dot"></span>Cosmic</div>
-          <h3>Cosmic Orbit</h3>
-          <p>Orbiting planet rings with starfield and galaxy glow in deep space.</p>
-          <div class="card-actions">
-            <button class="btn-preview" onclick="openPreview('cosmic')" id="btn-preview-cosmic">⤢ Preview</button>
-            <button class="btn-download" onclick="downloadWallpaper('cosmic')" id="btn-download-cosmic">↓ Download</button>
-          </div>
-        </div>
-      </article>
-
-      <!-- Card 3: Aurora -->
-      <article class="clock-card" id="card-aurora" data-theme="aurora">
-        <div class="card-preview">
-          <canvas class="preview-canvas" id="preview-aurora" width="280" height="180"></canvas>
-        </div>
-        <div class="card-info">
-          <div class="card-badge aurora-badge"><span class="live-dot"></span>Aurora</div>
-          <h3>Aurora Borealis</h3>
-          <p>Flowing northern lights in vivid greens and purples with crisp time display.</p>
-          <div class="card-actions">
-            <button class="btn-preview" onclick="openPreview('aurora')" id="btn-preview-aurora">⤢ Preview</button>
-            <button class="btn-download" onclick="downloadWallpaper('aurora')" id="btn-download-aurora">↓ Download</button>
-          </div>
-        </div>
-      </article>
-
-      <!-- Card 4: Matrix -->
-      <article class="clock-card" id="card-matrix" data-theme="matrix">
-        <div class="card-preview">
-          <canvas class="preview-canvas" id="preview-matrix" width="280" height="180"></canvas>
-        </div>
-        <div class="card-info">
-          <div class="card-badge matrix-badge"><span class="live-dot"></span>Matrix</div>
-          <h3>Digital Rain</h3>
-          <p>Classic green matrix code rain with bold digital time overlay.</p>
-          <div class="card-actions">
-            <button class="btn-preview" onclick="openPreview('matrix')" id="btn-preview-matrix">⤢ Preview</button>
-            <button class="btn-download" onclick="downloadWallpaper('matrix')" id="btn-download-matrix">↓ Download</button>
-          </div>
-        </div>
-      </article>
-
-      <!-- Card 5: Minimal Zen -->
-      <article class="clock-card" id="card-zen" data-theme="zen">
-        <div class="card-preview">
-          <canvas class="preview-canvas" id="preview-zen" width="280" height="180"></canvas>
-        </div>
-        <div class="card-info">
-          <div class="card-badge zen-badge"><span class="live-dot"></span>Minimal</div>
-          <h3>Minimal Zen</h3>
-          <p>Clean analog clock with breathing gradients and whisper-thin hands.</p>
-          <div class="card-actions">
-            <button class="btn-preview" onclick="openPreview('zen')" id="btn-preview-zen">⤢ Preview</button>
-            <button class="btn-download" onclick="downloadWallpaper('zen')" id="btn-download-zen">↓ Download</button>
-          </div>
-        </div>
-      </article>
-
-      <!-- Card 6: Retro Flip -->
-      <article class="clock-card" id="card-retro" data-theme="retro">
-        <div class="card-preview">
-          <canvas class="preview-canvas" id="preview-retro" width="280" height="180"></canvas>
-        </div>
-        <div class="card-info">
-          <div class="card-badge retro-badge"><span class="live-dot"></span>Retro</div>
-          <h3>Retro Flip</h3>
-          <p>Vintage split-flap display with warm amber lighting and film grain.</p>
-          <div class="card-actions">
-            <button class="btn-preview" onclick="openPreview('retro')" id="btn-preview-retro">⤢ Preview</button>
-            <button class="btn-download" onclick="downloadWallpaper('retro')" id="btn-download-retro">↓ Download</button>
-          </div>
-        </div>
-      </article>
-
-      <!-- Card 7: Holographic -->
-      <article class="clock-card" id="card-holo" data-theme="holo">
-        <div class="card-preview">
-          <canvas class="preview-canvas" id="preview-holo" width="280" height="180"></canvas>
-        </div>
-        <div class="card-info">
-          <div class="card-badge holo-badge"><span class="live-dot"></span>Holo</div>
-          <h3>Holographic</h3>
-          <p>Futuristic HUD with scanlines, prismatic glow, and floating hex data.</p>
-          <div class="card-actions">
-            <button class="btn-preview" onclick="openPreview('holo')" id="btn-preview-holo">⤢ Preview</button>
-            <button class="btn-download" onclick="downloadWallpaper('holo')" id="btn-download-holo">↓ Download</button>
-          </div>
-        </div>
-      </article>
-
-      <!-- Card 8: Crystal Bloom -->
-      <article class="clock-card" id="card-crystal" data-theme="crystal">
-        <div class="card-preview">
-          <canvas class="preview-canvas" id="preview-crystal" width="280" height="180"></canvas>
-        </div>
-        <div class="card-info">
-          <div class="card-badge aurora-badge"><span class="live-dot"></span>Crystal</div>
-          <h3>Crystal Bloom</h3>
-          <p>Iridescent glass petals and shimmer particles in a deep purple bloom.</p>
-          <div class="card-actions">
-            <button class="btn-preview" onclick="openPreview('crystal')" id="btn-preview-crystal">⤢ Preview</button>
-            <button class="btn-download" onclick="downloadWallpaper('crystal')" id="btn-download-crystal">↓ Download</button>
-          </div>
-        </div>
-      </article>
-
-      <!-- Card 9: Midnight Luxe -->
-      <article class="clock-card" id="card-luxe" data-theme="luxe">
-        <div class="card-preview">
-          <canvas class="preview-canvas" id="preview-luxe" width="280" height="180"></canvas>
-        </div>
-        <div class="card-info">
-          <div class="card-badge luxe-badge"><span class="live-dot"></span>Luxe</div>
-          <h3>Midnight Luxe</h3>
-          <p>Elegant analog face with sweeping gold hands on a brushed metal midnight background.</p>
-          <div class="card-actions">
-            <button class="btn-preview" onclick="openPreview('luxe')" id="btn-preview-luxe">⤢ Preview</button>
-            <button class="btn-download" onclick="downloadWallpaper('luxe')" id="btn-download-luxe">↓ Download</button>
-          </div>
-        </div>
-      </article>
-
-      <!-- Card 10: Ocean Depths -->
-      <article class="clock-card" id="card-ocean" data-theme="ocean">
-        <div class="card-preview">
-          <canvas class="preview-canvas" id="preview-ocean" width="280" height="180"></canvas>
-        </div>
-        <div class="card-info">
-          <div class="card-badge ocean-badge"><span class="live-dot"></span>Ocean</div>
-          <h3>Ocean Depths</h3>
-          <p>Fluid underwater ripples with minimalist analog hands and coral accents.</p>
-          <div class="card-actions">
-            <button class="btn-preview" onclick="openPreview('ocean')" id="btn-preview-ocean">⤢ Preview</button>
-            <button class="btn-download" onclick="downloadWallpaper('ocean')" id="btn-download-ocean">↓ Download</button>
-          </div>
-        </div>
-      </article>
-
-      <!-- Card 11: Steampunk -->
-      <article class="clock-card" id="card-steam" data-theme="steam">
-        <div class="card-preview">
-          <canvas class="preview-canvas" id="preview-steam" width="280" height="180"></canvas>
-        </div>
-        <div class="card-info">
-          <div class="card-badge steam-badge"><span class="live-dot"></span>Steampunk</div>
-          <h3>Brass Gears</h3>
-          <p>Intricate rotating gears and brass analog hands in a classic steampunk style.</p>
-          <div class="card-actions">
-            <button class="btn-preview" onclick="openPreview('steam')" id="btn-preview-steam">⤢ Preview</button>
-            <button class="btn-download" onclick="downloadWallpaper('steam')" id="btn-download-steam">↓ Download</button>
-          </div>
-        </div>
-      </article>
-
-      <!-- Card 12: Sakura -->
-      <article class="clock-card" id="card-sakura" data-theme="sakura">
-        <div class="card-preview">
-          <canvas class="preview-canvas" id="preview-sakura" width="280" height="180"></canvas>
-        </div>
-        <div class="card-info">
-          <div class="card-badge sakura-badge"><span class="live-dot"></span>Sakura</div>
-          <h3>Cherry Blossom</h3>
-          <p>Falling sakura petals and a delicate paper-textured analog face.</p>
-          <div class="card-actions">
-            <button class="btn-preview" onclick="openPreview('sakura')" id="btn-preview-sakura">⤢ Preview</button>
-            <button class="btn-download" onclick="downloadWallpaper('sakura')" id="btn-download-sakura">↓ Download</button>
-          </div>
-        </div>
-      </article>
-
-      <!-- Card 13: Aviator Dash -->
-      <article class="clock-card" id="card-aviator" data-theme="aviator">
-        <div class="card-preview">
-          <canvas class="preview-canvas" id="preview-aviator" width="280" height="180"></canvas>
-        </div>
-        <div class="card-info">
-          <div class="card-badge steam-badge"><span class="live-dot"></span>Aviator</div>
-          <h3>Aviator Dash</h3>
-          <p>High contrast matte instrument panel dial with glowing hands and markers.</p>
-          <div class="card-actions">
-            <button class="btn-preview" onclick="openPreview('aviator')" id="btn-preview-aviator">⤢ Preview</button>
-            <button class="btn-download" onclick="downloadWallpaper('aviator')" id="btn-download-aviator">↓ Download</button>
-          </div>
-        </div>
-      </article>
-
-            <!-- Card 14: Swiss Station -->
-      <article class="clock-card" id="card-swiss" data-theme="swiss">
-        <div class="card-preview">
-          <canvas class="preview-canvas" id="preview-swiss" width="280" height="180"></canvas>
-        </div>
-        <div class="card-info">
-          <div class="card-badge zen-badge"><span class="live-dot"></span>Swiss</div>
-          <h3>Swiss Station</h3>
-          <p>Classic minimalist railway clock layout with a bright red sweeping second hand.</p>
-          <div class="card-actions">
-            <button class="btn-preview" onclick="openPreview('swiss')" id="btn-preview-swiss">⤢ Preview</button>
-            <button class="btn-download" onclick="downloadWallpaper('swiss')" id="btn-download-swiss">↓ Download</button>
-          </div>
-        </div>
-      </article>
-
-      <!-- Card 15: Cyber Glitch -->
-      <article class="clock-card" id="card-cyber" data-theme="cyber">
-        <div class="card-preview">
-          <canvas class="preview-canvas" id="preview-cyber" width="280" height="180"></canvas>
-        </div>
-        <div class="card-info">
-          <div class="card-badge cyber-badge"><span class="live-dot"></span>Cyber</div>
-          <h3>Cyber Glitch</h3>
-          <p>Distorted neon digits with flickering glitch effects and digital scanning lines.</p>
-          <div class="card-actions">
-            <button class="btn-preview" onclick="openPreview('cyber')" id="btn-preview-cyber">⤢ Preview</button>
-            <button class="btn-download" onclick="downloadWallpaper('cyber')" id="btn-download-cyber">↓ Download</button>
-          </div>
-        </div>
-      </article>
-
-      <!-- Card 16: Solar Eclipse -->
-      <article class="clock-card" id="card-solar" data-theme="solar">
-        <div class="card-preview">
-          <canvas class="preview-canvas" id="preview-solar" width="280" height="180"></canvas>
-        </div>
-        <div class="card-info">
-          <div class="card-badge cosmic-badge"><span class="live-dot"></span>Eclipse</div>
-          <h3>Solar Eclipse</h3>
-          <p>Minimalist glowing corona with a central dark orb and light-beam hands.</p>
-          <div class="card-actions">
-            <button class="btn-preview" onclick="openPreview('solar')" id="btn-preview-solar">⤢ Preview</button>
-            <button class="btn-download" onclick="downloadWallpaper('solar')" id="btn-download-solar">↓ Download</button>
-          </div>
-        </div>
-      </article>
-
-      <!-- Card 17: Radar Pulse -->
-      <article class="clock-card" id="card-radar" data-theme="radar">
-        <div class="card-preview">
-          <canvas class="preview-canvas" id="preview-radar" width="280" height="180"></canvas>
-        </div>
-        <div class="card-info">
-          <div class="card-badge radar-badge"><span class="live-dot"></span>Radar</div>
-          <h3>Radar Sweep</h3>
-          <p>Tactical military-style radar scan with glowing blips and a dark HUD frame.</p>
-          <div class="card-actions">
-            <button class="btn-preview" onclick="openPreview('radar')" id="btn-preview-radar">⤢ Preview</button>
-            <button class="btn-download" onclick="downloadWallpaper('radar')" id="btn-download-radar">↓ Download</button>
-          </div>
-        </div>
-      </article>
-
-      <!-- Card 18: Binary Rain -->
-      <article class="clock-card" id="card-binary" data-theme="binary">
-        <div class="card-preview">
-          <canvas class="preview-canvas" id="preview-binary" width="280" height="180"></canvas>
-        </div>
-        <div class="card-info">
-          <div class="card-badge cyan-badge"><span class="live-dot"></span>Binary</div>
-          <h3>Binary Rain</h3>
-          <p>Falling zeroes and ones in electric cyan with a hacker terminal readout.</p>
-          <div class="card-actions">
-            <button class="btn-preview" onclick="openPreview('binary')" id="btn-preview-binary">⤢ Preview</button>
-            <button class="btn-download" onclick="downloadWallpaper('binary')" id="btn-download-binary">↓ Download</button>
-          </div>
-        </div>
-      </article>
-
-      <!-- Card 19: Molten Core -->
-      <article class="clock-card" id="card-molten" data-theme="molten">
-        <div class="card-preview">
-          <canvas class="preview-canvas" id="preview-molten" width="280" height="180"></canvas>
-        </div>
-        <div class="card-info">
-          <div class="card-badge molten-badge"><span class="live-dot"></span>Molten</div>
-          <h3>Cracked Magma</h3>
-          <p>Glowing lava pulsing through obsidian cracks with burning ember particles.</p>
-          <div class="card-actions">
-            <button class="btn-preview" onclick="openPreview('molten')" id="btn-preview-molten">⤢ Preview</button>
-            <button class="btn-download" onclick="downloadWallpaper('molten')" id="btn-download-molten">↓ Download</button>
-          </div>
-        </div>
-      </article>
-
-      <!-- Card 20: Circuit Board -->
-      <article class="clock-card" id="card-circuit" data-theme="circuit">
-        <div class="card-preview">
-          <canvas class="preview-canvas" id="preview-circuit" width="280" height="180"></canvas>
-        </div>
-        <div class="card-info">
-          <div class="card-badge circuit-badge"><span class="live-dot"></span>Circuit</div>
-          <h3>Mainboard Glow</h3>
-          <p>Intricate glowing circuit traces and pulsing logic chips in emerald green.</p>
-          <div class="card-actions">
-            <button class="btn-preview" onclick="openPreview('circuit')" id="btn-preview-circuit">⤢ Preview</button>
-            <button class="btn-download" onclick="downloadWallpaper('circuit')" id="btn-download-circuit">↓ Download</button>
-          </div>
-        </div>
-      </article>
-
-      <!-- Card 21: Night City -->
-      <article class="clock-card" id="card-city" data-theme="city">
-        <div class="card-preview">
-          <canvas class="preview-canvas" id="preview-city" width="280" height="180"></canvas>
-        </div>
-        <div class="card-info">
-          <div class="card-badge city-badge"><span class="live-dot"></span>City</div>
-          <h3>Synthwave Nights</h3>
-          <p>Neon city silhouette beneath a retro sun with vibrant purple gradients.</p>
-          <div class="card-actions">
-            <button class="btn-preview" onclick="openPreview('city')" id="btn-preview-city">⤢ Preview</button>
-            <button class="btn-download" onclick="downloadWallpaper('city')" id="btn-download-city">↓ Download</button>
-          </div>
-        </div>
-      </article>
-
-      <!-- Card 22: Void Watcher -->
-      <article class="clock-card" id="card-void" data-theme="void">
-        <div class="card-preview">
-          <canvas class="preview-canvas" id="preview-void" width="280" height="180"></canvas>
-        </div>
-        <div class="card-info">
-          <div class="card-badge void-badge"><span class="live-dot"></span>Void</div>
-          <h3>The Watcher</h3>
-          <p>Eldritch eye that follows the time, surrounded by shifting dark mists.</p>
-          <div class="card-actions">
-            <button class="btn-preview" onclick="openPreview('void')" id="btn-preview-void">⤢ Preview</button>
-            <button class="btn-download" onclick="downloadWallpaper('void')" id="btn-download-void">↓ Download</button>
-          </div>
-        </div>
-      </article>
-
-      <!-- Card 23: Deep Sea -->
-      <article class="clock-card" id="card-sea" data-theme="sea">
-        <div class="card-preview">
-          <canvas class="preview-canvas" id="preview-sea" width="280" height="180"></canvas>
-        </div>
-        <div class="card-info">
-          <div class="card-badge ocean-badge"><span class="live-dot"></span>Deep Sea</div>
-          <h3>Luminescent Abyss</h3>
-          <p>Bioluminescent ripples and ghostly depth reflections from the ocean floor.</p>
-          <div class="card-actions">
-            <button class="btn-preview" onclick="openPreview('sea')" id="btn-preview-sea">⤢ Preview</button>
-            <button class="btn-download" onclick="downloadWallpaper('sea')" id="btn-download-sea">↓ Download</button>
-          </div>
-        </div>
-      </article>
-
-      <!-- Card 24: Infinity Mirror -->
-      <article class="clock-card" id="card-infinity" data-theme="infinity">
-        <div class="card-preview">
-          <canvas class="preview-canvas" id="preview-infinity" width="280" height="180"></canvas>
-        </div>
-        <div class="card-info">
-          <div class="card-badge luxe-badge"><span class="live-dot"></span>Depth</div>
-          <h3>Infinity Loop</h3>
-          <p>Recursive neon reflections spanning into an infinite dark tunnel.</p>
-          <div class="card-actions">
-            <button class="btn-preview" onclick="openPreview('infinity')" id="btn-preview-infinity">⤢ Preview</button>
-            <button class="btn-download" onclick="downloadWallpaper('infinity')" id="btn-download-infinity">↓ Download</button>
-          </div>
-        </div>
-      </article>
-
-      <!-- Card 25: Prism Core -->
-      <article class="clock-card" id="card-prism" data-theme="prism">
-        <div class="card-preview">
-          <canvas class="preview-canvas" id="preview-prism" width="280" height="180"></canvas>
-        </div>
-        <div class="card-info">
-          <div class="card-badge cosmic-badge"><span class="live-dot"></span>Geometric</div>
-          <h3>Prism Core</h3>
-          <p>Shifting geometric crystal with vibrant light scattering and deep space vibes.</p>
-          <div class="card-actions">
-            <button class="btn-preview" onclick="openPreview('prism')" id="btn-preview-prism">⤢ Preview</button>
-            <button class="btn-download" onclick="downloadWallpaper('prism')" id="btn-download-prism">↓ Download</button>
-          </div>
-        </div>
-      </article>
-
-      <!-- Card 26: Plasma Storm -->
-      <article class="clock-card" id="card-plasma" data-theme="plasma">
-        <div class="card-preview">
-          <canvas class="preview-canvas" id="preview-plasma" width="280" height="180"></canvas>
-        </div>
-        <div class="card-info">
-          <div class="card-badge cyber-badge"><span class="live-dot"></span>Plasma</div>
-          <h3>Plasma Storm</h3>
-          <p>Fluid plasma energy with magnetic lightning and vibrant electric hues.</p>
-          <div class="card-actions">
-            <button class="btn-preview" onclick="openPreview('plasma')" id="btn-preview-plasma">⤢ Preview</button>
-            <button class="btn-download" onclick="downloadWallpaper('plasma')" id="btn-download-plasma">↓ Download</button>
-          </div>
-        </div>
-      </article>
-
-      <!-- Card 27: Star Dust -->
-      <article class="clock-card" id="card-stardust" data-theme="stardust">
-        <div class="card-preview">
-          <canvas class="preview-canvas" id="preview-stardust" width="280" height="180"></canvas>
-        </div>
-        <div class="card-info">
-          <div class="card-badge cosmic-badge"><span class="live-dot"></span>Stellar</div>
-          <h3>Star Dust</h3>
-          <p>Gentle drifting star particles forming a ethereal time display in the void.</p>
-          <div class="card-actions">
-            <button class="btn-preview" onclick="openPreview('stardust')" id="btn-preview-stardust">⤢ Preview</button>
-            <button class="btn-download" onclick="downloadWallpaper('stardust')" id="btn-download-stardust">↓ Download</button>
-          </div>
-        </div>
-      </article>
-
-      <!-- Card 28: Paper Cut -->
-      <article class="clock-card" id="card-paper" data-theme="paper">
-        <div class="card-preview">
-          <canvas class="preview-canvas" id="preview-paper" width="280" height="180"></canvas>
-        </div>
-        <div class="card-info">
-          <div class="card-badge zen-badge"><span class="live-dot"></span>Craft</div>
-          <h3>Paper Cut</h3>
-          <p>Minimalist layered paper aesthetic with soft shadows and crisp typography.</p>
-          <div class="card-actions">
-            <button class="btn-preview" onclick="openPreview('paper')" id="btn-preview-paper">⤢ Preview</button>
-            <button class="btn-download" onclick="downloadWallpaper('paper')" id="btn-download-paper">↓ Download</button>
-          </div>
-        </div>
-      </article>
-
-      <!-- Card 29: Glitch Tokyo -->
-      <article class="clock-card" id="card-tokyo" data-theme="tokyo">
-        <div class="card-preview">
-          <canvas class="preview-canvas" id="preview-tokyo" width="280" height="180"></canvas>
-        </div>
-        <div class="card-info">
-          <div class="card-badge cyber-badge"><span class="live-dot"></span>Urban</div>
-          <h3>Glitch Tokyo</h3>
-          <p>Hyper-detailed urban cyberpunk glitch with Kanji elements and neon chaos.</p>
-          <div class="card-actions">
-            <button class="btn-preview" onclick="openPreview('tokyo')" id="btn-preview-tokyo">⤢ Preview</button>
-            <button class="btn-download" onclick="downloadWallpaper('tokyo')" id="btn-download-tokyo">↓ Download</button>
-          </div>
-        </div>
-      </article>
-
-      <!-- Card 30: Arctic Frost -->
-      <article class="clock-card" id="card-arctic" data-theme="arctic">
-        <div class="card-preview">
-          <canvas class="preview-canvas" id="preview-arctic" width="280" height="180"></canvas>
-        </div>
-        <div class="card-info">
-          <div class="card-badge ocean-badge"><span class="live-dot"></span>Frozen</div>
-          <h3>Arctic Frost</h3>
-          <p>Frozen glass effects with drifting snow particles and a chill arctic sync.</p>
-          <div class="card-actions">
-            <button class="btn-preview" onclick="openPreview('arctic')" id="btn-preview-arctic">⤢ Preview</button>
-            <button class="btn-download" onclick="downloadWallpaper('arctic')" id="btn-download-arctic">↓ Download</button>
-          </div>
-        </div>
-      </article>
-
-      <!-- Card 31: Golden Hour -->
-      <article class="clock-card" id="card-gold" data-theme="gold">
-        <div class="card-preview">
-          <canvas class="preview-canvas" id="preview-gold" width="280" height="180"></canvas>
-        </div>
-        <div class="card-info">
-          <div class="card-badge gold-badge"><span class="live-dot"></span>Luxury</div>
-          <h3>Golden Hour</h3>
-          <p>Exquisite marble dial with gold-plated hands and warm cinematic lighting.</p>
-          <div class="card-actions">
-            <button class="btn-preview" onclick="openPreview('gold')" id="btn-preview-gold">⤢ Preview</button>
-            <button class="btn-download" onclick="downloadWallpaper('gold')" id="btn-download-gold">↓ Download</button>
-          </div>
-        </div>
-      </article>
-
-      <!-- Card 32: Nebula Bloom -->
-      <article class="clock-card" id="card-nebula" data-theme="nebula">
-        <div class="card-preview">
-          <canvas class="preview-canvas" id="preview-nebula" width="280" height="180"></canvas>
-        </div>
-        <div class="card-info">
-          <div class="card-badge fluid-badge"><span class="live-dot"></span>Fluid</div>
-          <h3>Nebula Bloom</h3>
-          <p>Organic moving blobs in a deep space nebula with clean modern time display.</p>
-          <div class="card-actions">
-            <button class="btn-preview" onclick="openPreview('nebula')" id="btn-preview-nebula">⤢ Preview</button>
-            <button class="btn-download" onclick="downloadWallpaper('nebula')" id="btn-download-nebula">↓ Download</button>
-          </div>
-        </div>
-      </article>
-
-      <!-- Card 33: Geometric Bloom -->
-      <article class="clock-card" id="card-bloom" data-theme="bloom">
-        <div class="card-preview">
-          <canvas class="preview-canvas" id="preview-bloom" width="280" height="180"></canvas>
-        </div>
-        <div class="card-info">
-          <div class="card-badge bloom-badge"><span class="live-dot"></span>Artistic</div>
-          <h3>Geometric Bloom</h3>
-          <p>A multi-layered flower that breathes and rotates in a deep purple void.</p>
-          <div class="card-actions">
-            <button class="btn-preview" onclick="openPreview('bloom')" id="btn-preview-bloom">⤢ Preview</button>
-            <button class="btn-download" onclick="downloadWallpaper('bloom')" id="btn-download-bloom">↓ Download</button>
-          </div>
-        </div>
-      </article>
-
-      <!-- Card 34: Synthwave Sunset -->
-      <article class="clock-card" id="card-synthwave" data-theme="synthwave">
-        <div class="card-preview">
-          <canvas class="preview-canvas" id="preview-synthwave" width="280" height="180"></canvas>
-        </div>
-        <div class="card-info">
-          <div class="card-badge synthwave-badge"><span class="live-dot"></span>Retro</div>
-          <h3>Synthwave Sunset</h3>
-          <p>80s retro grid and sliced sun with vibrant purple and neon pink aesthetics.</p>
-          <div class="card-actions">
-            <button class="btn-preview" onclick="openPreview('synthwave')" id="btn-preview-synthwave">⤢ Preview</button>
-            <button class="btn-download" onclick="downloadWallpaper('synthwave')" id="btn-download-synthwave">↓ Download</button>
-          </div>
-        </div>
-      </article>
-
-      <!-- Card 35: Quantum Vortex -->
-      <article class="clock-card" id="card-vortex" data-theme="vortex">
-        <div class="card-preview">
-          <canvas class="preview-canvas" id="preview-vortex" width="280" height="180"></canvas>
-        </div>
-        <div class="card-info">
-          <div class="card-badge vortex-badge"><span class="live-dot"></span>Quantum</div>
-          <h3>Quantum Vortex</h3>
-          <p>A hypnotic swirling vortex of energy particles forming an ethereal analog face.</p>
-          <div class="card-actions">
-            <button class="btn-preview" onclick="openPreview('vortex')" id="btn-preview-vortex">⤢ Preview</button>
-            <button class="btn-download" onclick="downloadWallpaper('vortex')" id="btn-download-vortex">↓ Download</button>
-          </div>
-        </div>
-      </article>
-
-      <!-- Card 36: Emerald Forest -->
-      <article class="clock-card" id="card-forest" data-theme="forest">
-        <div class="card-preview">
-          <canvas class="preview-canvas" id="preview-forest" width="280" height="180"></canvas>
-        </div>
-        <div class="card-info">
-          <div class="card-badge forest-badge"><span class="live-dot"></span>Nature</div>
-          <h3>Emerald Forest</h3>
-          <p>Organic breathing leaf shapes and deep forest gradients with minimalist analog hands.</p>
-          <div class="card-actions">
-            <button class="btn-preview" onclick="openPreview('forest')" id="btn-preview-forest">⤢ Preview</button>
-            <button class="btn-download" onclick="downloadWallpaper('forest')" id="btn-download-forest">↓ Download</button>
-          </div>
-        </div>
-      </article>
-      
-      <!-- Card 37: Quantum Pulse -->
-      <article class="clock-card" id="card-quantum" data-theme="quantum">
-        <div class="card-preview">
-          <canvas class="preview-canvas" id="preview-quantum" width="280" height="180"></canvas>
-        </div>
-        <div class="card-info">
-          <div class="card-badge quantum-badge"><span class="live-dot"></span>Theoretical Physics</div>
-          <h3>Schrödinger's Pulse</h3>
-          <p>Superposition time display over probability wave functions and fluctuating quantum particles.</p>
-          <div class="card-actions">
-            <button class="btn-preview" onclick="openPreview('quantum')" id="btn-preview-quantum">⤢ Preview</button>
-            <button class="btn-download" onclick="downloadWallpaper('quantum')" id="btn-download-quantum">↓ Download</button>
-          </div>
-        </div>
-      </article>
-
-      <!-- Card 38: Mecha Core -->
-      <article class="clock-card" id="card-robotics" data-theme="robotics">
-        <div class="card-preview">
-          <canvas class="preview-canvas" id="preview-robotics" width="280" height="180"></canvas>
-        </div>
-        <div class="card-info">
-          <div class="card-badge robotics-badge"><span class="live-dot"></span>Robotics</div>
-          <h3>Mecha Core</h3>
-          <p>Industrial mechanical hub with diagnostic sensor arrays and scanning laser arrays.</p>
-          <div class="card-actions">
-            <button class="btn-preview" onclick="openPreview('robotics')" id="btn-preview-robotics">⤢ Preview</button>
-            <button class="btn-download" onclick="downloadWallpaper('robotics')" id="btn-download-robotics">↓ Download</button>
-          </div>
-        </div>
-      </article>
-
-      <!-- Card 39: Event Horizon -->
-      <article class="clock-card" id="card-horizon" data-theme="horizon">
-        <div class="card-preview">
-          <canvas class="preview-canvas" id="preview-horizon" width="280" height="180"></canvas>
-        </div>
-        <div class="card-info">
-          <div class="card-badge void-badge"><span class="live-dot"></span>Astrophysics</div>
-          <h3>Event Horizon</h3>
-          <p>Black hole simulation with accretion disk, gravitational lensing, and relativistic time dilation.</p>
-          <div class="card-actions">
-            <button class="btn-preview" onclick="openPreview('horizon')" id="btn-preview-horizon">⤢ Preview</button>
-            <button class="btn-download" onclick="downloadWallpaper('horizon')" id="btn-download-horizon">↓ Download</button>
-          </div>
-        </div>
-      </article>
-
-      <!-- Card 40: Neon Arc -->
-      <article class="clock-card" id="card-neonarc" data-theme="neonarc">
-        <div class="card-preview">
-          <canvas class="preview-canvas" id="preview-neonarc" width="280" height="180"></canvas>
-        </div>
-        <div class="card-info">
-          <div class="card-badge neonarc-badge"><span class="live-dot"></span>Analog</div>
-          <h3>Neon Arc</h3>
-          <p>Glowing neon progress rings on a deep purple field with floating magenta particles.</p>
-          <div class="card-actions">
-            <button class="btn-preview" onclick="openPreview('neonarc')" id="btn-preview-neonarc">⤢ Preview</button>
-            <button class="btn-download" onclick="downloadWallpaper('neonarc')" id="btn-download-neonarc">↓ Download</button>
-          </div>
-        </div>
-      </article>
-
-      <!-- Card 41: Solar Wind -->
-      <article class="clock-card" id="card-solarwind" data-theme="solarwind">
-        <div class="card-preview">
-          <canvas class="preview-canvas" id="preview-solarwind" width="280" height="180"></canvas>
-        </div>
-        <div class="card-info">
-          <div class="card-badge solarwind-badge"><span class="live-dot"></span>Analog</div>
-          <h3>Solar Wind</h3>
-          <p>A blazing solar disk with animated corona rays and dark precision hands against deep space.</p>
-          <div class="card-actions">
-            <button class="btn-preview" onclick="openPreview('solarwind')" id="btn-preview-solarwind">⤢ Preview</button>
-            <button class="btn-download" onclick="downloadWallpaper('solarwind')" id="btn-download-solarwind">↓ Download</button>
-          </div>
-        </div>
-      </article>
-
-      <!-- Card 42: Cyber Terminal -->
-      <article class="clock-card" id="card-terminal" data-theme="terminal">
-        <div class="card-preview">
-          <canvas class="preview-canvas" id="preview-terminal" width="280" height="180"></canvas>
-        </div>
-        <div class="card-info">
-          <div class="card-badge terminal-badge"><span class="live-dot"></span>Digital</div>
-          <h3>Cyber Terminal</h3>
-          <p>Hacker-style OS terminal with scrolling system logs, scanlines, and vivid green time display.</p>
-          <div class="card-actions">
-            <button class="btn-preview" onclick="openPreview('terminal')" id="btn-preview-terminal">⤢ Preview</button>
-            <button class="btn-download" onclick="downloadWallpaper('terminal')" id="btn-download-terminal">↓ Download</button>
-          </div>
-        </div>
-      </article>
-
-      <!-- Card 43: Glassmorphic -->
-      <article class="clock-card" id="card-glass" data-theme="glass">
-        <div class="card-preview">
-          <canvas class="preview-canvas" id="preview-glass" width="280" height="180"></canvas>
-        </div>
-        <div class="card-info">
-          <div class="card-badge glass-badge"><span class="live-dot"></span>Digital</div>
-          <h3>Glassmorphic</h3>
-          <p>Frosted glass panel over animated gradient orbs with a chromatic time display and seconds bar.</p>
-          <div class="card-actions">
-            <button class="btn-preview" onclick="openPreview('glass')" id="btn-preview-glass">⤢ Preview</button>
-            <button class="btn-download" onclick="downloadWallpaper('glass')" id="btn-download-glass">↓ Download</button>
-          </div>
-        </div>
-      </article>
-
-    </div>
-  </section>
-
-  <!-- ============ FEATURES ============ -->
-  <section id="features">
-    <div class="section-header">
-      <div class="section-tag">Features</div>
-      <h2>Why <span class="gradient-text">Prism?</span></h2>
-    </div>
-    <div class="features-grid">
-      <div class="feature-card">
-        <div class="feature-icon">⏱</div>
-        <h4>Real-Time Sync</h4>
-        <p>Every clock reads your actual PC system time, updated every second with zero lag.</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon">🎨</div>
-        <h4>43 Unique Styles</h4>
-        <p>From retro flip-boards to deep space orbits — curated designs for every taste.</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon">📥</div>
-        <h4>Instant Download</h4>
-        <p>Grab a high-res static snapshot or open full-screen to use as a live page wallpaper.</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon">🖥</div>
-        <h4>Fullscreen Mode</h4>
-        <p>One click to open any clock full-screen — perfect for a second monitor or stream overlay.</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon">⚡</div>
-        <h4>Lightweight</h4>
-        <p>Pure HTML + Canvas. No heavy frameworks, no tracking — blazing fast on any machine.</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon">🆓</div>
-        <h4>100% Free</h4>
-        <p>All wallpapers are completely free to use, download, and share. No sign-up required.</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- ============ HOW TO USE ============ -->
-  <section id="how">
-    <div class="section-header">
-      <div class="section-tag">How to Use</div>
-      <h2>Set It Up in <span class="gradient-text">3 Steps</span></h2>
-    </div>
-    <div class="steps-row">
-      <div class="step">
-        <div class="step-num">01</div>
-        <h4>Pick a Clock</h4>
-        <p>Browse the gallery above and find the clock style that speaks to you.</p>
-      </div>
-      <div class="step-arrow">→</div>
-      <div class="step">
-        <div class="step-num">02</div>
-        <h4>Open Fullscreen</h4>
-        <p>Click <strong>Preview</strong> to open the clock full-screen on your browser.</p>
-      </div>
-      <div class="step-arrow">→</div>
-      <div class="step">
-        <div class="step-num">03</div>
-        <h4>Set as Wallpaper</h4>
-        <p>Use <strong>Lively Wallpaper</strong> (Windows) or <strong>Wallpaper Engine</strong> to set the URL as a live web wallpaper.</p>
-      </div>
-    </div>
-    <div class="how-tip">
-      <span>💡</span>
-      <span><strong>Tip:</strong> Use <a href="https://github.com/rocksdanister/lively/releases/download/v2.2.1.0/lively_setup_x86_full_v2210.exe" target="_blank">Lively Wallpaper</a> (free, open source) on Windows — just paste the clock's preview URL and it runs live on your desktop!</span>
-    </div>
-  </section>
-
-  <!-- ============ FOOTER ============ -->
-  <footer id="footer">
-    <div class="footer-inner">
-      <div class="footer-logo">
-        <span class="logo-icon">⧖</span>
-        <span class="logo-text">Prism</span>
-      </div>
-      <p class="footer-sub">Time is the most beautiful art. Let it live on your desktop.</p>
-      <div class="footer-live">
-        <span>Your current time: </span>
-        <span id="footerTime" class="footer-time"></span>
-      </div>
-      <p class="footer-copy">© 2026 Prism · Made with ♡ · Free forever</p>
-    </div>
-  </footer>
-
-  <!-- ============ FULLSCREEN MODAL ============ -->
-  <div id="previewModal" class="modal" role="dialog" aria-modal="true" aria-label="Clock Preview">
-    <div class="modal-controls">
-      <span class="modal-title" id="modalTitle"></span>
-      <div class="modal-btns">
-        <button id="modalDownload" class="modal-btn-dl" onclick="downloadCurrentPreview()">↓ Download</button>
-        <button id="modalClose" class="modal-btn-close" onclick="closePreview()" aria-label="Close">✕</button>
-      </div>
-    </div>
-    <canvas id="modalCanvas"></canvas>
-  </div>
-
-  <script src="script.js"></script>
-</body>
+    <script src="script.js"></script>
+  </body>
 </html>
- 

@@ -72,8 +72,8 @@ body {
   display: flex;
   align-items: center;
   background: rgba(8,11,20,0.75);
-  backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
   border-bottom: 1px solid var(--border);
   transition: background 0.3s;
 }
@@ -440,6 +440,10 @@ section {
 .solarwind-badge{ background: rgba(251,146,60,0.12); color: #fb923c;        border: 1px solid rgba(251,146,60,0.3); }
 .terminal-badge { background: rgba(0,255,70,0.08);   color: #00ff46;        border: 1px solid rgba(0,255,70,0.3); }
 .glass-badge    { background: rgba(167,139,250,0.12);color: #a78bfa;        border: 1px solid rgba(167,139,250,0.3); }
+.depth-badge    { background: rgba(100,180,255,0.12); color: #64b4ff;        border: 1px solid rgba(100,180,255,0.3); }
+.mechanical-badge { background: rgba(212,175,55,0.12); color: #d4af37;        border: 1px solid rgba(212,175,55,0.3); }
+.segment-badge  { background: rgba(255,107,53,0.12);  color: #ff6b35;        border: 1px solid rgba(255,107,53,0.3); }
+.nature-badge   { background: rgba(100,200,100,0.12); color: #64c864;        border: 1px solid rgba(100,200,100,0.3); }
 
 .live-dot {
   display: inline-block;
