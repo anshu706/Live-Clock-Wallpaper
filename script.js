@@ -1454,7 +1454,11 @@ const CLOCKS = {
   forest:  { fn: drawForest,  name: 'Emerald Forest' },
   quantum:   { fn: drawQuantum,  name: 'Quantum Pulse' },
   robotics:  { fn: drawRobotics, name: 'Mecha Core' },
-  horizon:   { fn: drawEventHorizon, name: 'Event Horizon' }
+  horizon:   { fn: drawEventHorizon, name: 'Event Horizon' },
+  neonarc:   { fn: drawNeonArc,  name: 'Neon Arc' },
+  solarwind: { fn: drawSolarWind, name: 'Solar Wind' },
+  terminal:  { fn: drawTerminal, name: 'Cyber Terminal' },
+  glass:     { fn: drawGlass,    name: 'Glassmorphic' }
 };
 
 // ─────────────────────────────────────────────
@@ -1601,7 +1605,11 @@ const THEME_GLOBALS = {
   forest: `let leafShapes = [];`,
   quantum:   `let quantumFlakes = [];`,
   robotics:  `let roboticsSensors = [];`,
-  horizon:   `let singularityParticles = [];`
+  horizon:   `let singularityParticles = [];`,
+  neonarc:   `let neonArcAngle = 0;\nlet neonArcParticles = [];`,
+  solarwind: `let solarWindAngle = 0;\nlet solarRays = [];`,
+  terminal:  `let terminalLines = [];\nlet terminalTick = 0;`,
+  glass:     `let glassShift = 0;`
 };
 
 // Map theme → which helper init functions it needs (by reference)
@@ -1623,6 +1631,9 @@ function getThemeHelpers(theme) {
     quantum:  typeof initQuantum     === 'function' ? [initQuantum]     : [],
     robotics: typeof initRobotics    === 'function' ? [initRobotics]    : [],
     horizon:  typeof initEventHorizon === 'function' ? [initEventHorizon] : [],
+    neonarc:  typeof initNeonArc     === 'function' ? [initNeonArc]     : [],
+    solarwind: typeof initSolarWind  === 'function' ? [initSolarWind]   : [],
+    terminal: typeof initTerminal    === 'function' ? [initTerminal]    : [],
   };
   return (map[theme] || []).map(fn => fn.toString()).join('\n\n');
 }
@@ -3213,6 +3224,512 @@ function drawEventHorizon(ctx, w, h) {
   ctx.fillStyle = '#f87171';
   ctx.fillText('TIME DILATION: 0.9998g', cx, cy + R + 40);
   ctx.fillText('EVENT HORIZON REACHED', cx, cy - R - 40);
+}
+
+/* ── 40. NEON ARC (Analog) ──────────────────── */
+let neonArcAngle = 0;
+let neonArcParticles = [];
+function initNeonArc(w, h) {
+  if (neonArcParticles.length > 0) return;
+  for (let i = 0; i < 60; i++) {
+    neonArcParticles.push({
+      angle: Math.random() * Math.PI * 2,
+      dist: Math.random() * Math.min(w, h) * 0.5,
+      speed: (Math.random() - 0.5) * 0.02,
+      size: Math.random() * 2 + 0.5,
+      hue: Math.random() * 60 + 280, // purples/magentas
+      life: Math.random()
+    });
+  }
+}
+function drawNeonArc(ctx, w, h) {
+  const t = getTime();
+  const cx = w / 2, cy = h / 2;
+  const R = Math.min(w, h) * 0.36;
+  neonArcAngle += 0.003;
+  initNeonArc(w, h);
+
+  // Dark bg with subtle radial
+  const bg = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.max(w, h));
+  bg.addColorStop(0, '#0e0518');
+  bg.addColorStop(0.6, '#08030f');
+  bg.addColorStop(1, '#000');
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, w, h);
+
+  // Floating particles
+  for (const p of neonArcParticles) {
+    p.angle += p.speed;
+    p.life += 0.01;
+    const px = cx + Math.cos(p.angle) * p.dist;
+    const py = cy + Math.sin(p.angle) * p.dist;
+    const alpha = 0.3 + 0.3 * Math.sin(p.life);
+    ctx.beginPath();
+    ctx.arc(px, py, p.size, 0, Math.PI * 2);
+    ctx.fillStyle = `hsla(${p.hue}, 100%, 70%, ${alpha})`;
+    ctx.fill();
+  }
+
+  // Outer glow ring (progress ring for minutes)
+  const mPct = (t.m + t.s / 60) / 60;
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.rotate(-Math.PI / 2);
+
+  // Background ring
+  ctx.beginPath();
+  ctx.arc(0, 0, R, 0, Math.PI * 2);
+  ctx.strokeStyle = 'rgba(180, 80, 255, 0.08)';
+  ctx.lineWidth = 12;
+  ctx.stroke();
+
+  // Minutes arc
+  const mGrd = ctx.createConicalGradient ? null : ctx.strokeStyle;
+  ctx.beginPath();
+  ctx.arc(0, 0, R, 0, mPct * Math.PI * 2);
+  const mGradLine = ctx.createLinearGradient(-R, 0, R, 0);
+  mGradLine.addColorStop(0, '#c026d3');
+  mGradLine.addColorStop(1, '#7c3aed');
+  ctx.strokeStyle = mGradLine;
+  ctx.lineWidth = 8;
+  ctx.lineCap = 'round';
+  ctx.shadowBlur = 20; ctx.shadowColor = '#c026d3';
+  ctx.stroke();
+  ctx.shadowBlur = 0;
+
+  // Seconds thin ring
+  const sPct = (t.s + t.ms / 1000) / 60;
+  ctx.beginPath();
+  ctx.arc(0, 0, R * 1.1, 0, sPct * Math.PI * 2);
+  ctx.strokeStyle = '#00ffcc';
+  ctx.lineWidth = 2;
+  ctx.shadowBlur = 14; ctx.shadowColor = '#00ffcc';
+  ctx.stroke();
+  ctx.shadowBlur = 0;
+  ctx.restore();
+
+  // Tick marks
+  for (let i = 0; i < 60; i++) {
+    const a = (i / 60) * Math.PI * 2 - Math.PI / 2;
+    const isHour = i % 5 === 0;
+    const ir = R * (isHour ? 0.82 : 0.9);
+    const or = R * 0.97;
+    ctx.beginPath();
+    ctx.moveTo(cx + Math.cos(a) * ir, cy + Math.sin(a) * ir);
+    ctx.lineTo(cx + Math.cos(a) * or, cy + Math.sin(a) * or);
+    ctx.strokeStyle = isHour ? 'rgba(200,100,255,0.7)' : 'rgba(180,80,255,0.2)';
+    ctx.lineWidth = isHour ? 2.5 : 1;
+    ctx.stroke();
+  }
+
+  // Hands
+  const hAngle = ((t.h12 + t.m / 60) / 12) * Math.PI * 2 - Math.PI / 2;
+  const mAngle = ((t.m + t.s / 60) / 60) * Math.PI * 2 - Math.PI / 2;
+  const sAngle = ((t.s + t.ms / 1000) / 60) * Math.PI * 2 - Math.PI / 2;
+
+  // Hour hand
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.rotate(hAngle + Math.PI / 2);
+  ctx.beginPath();
+  ctx.moveTo(0, R * 0.1);
+  ctx.lineTo(0, -R * 0.52);
+  ctx.strokeStyle = '#e879f9';
+  ctx.lineWidth = 5;
+  ctx.lineCap = 'round';
+  ctx.shadowBlur = 18; ctx.shadowColor = '#e879f9';
+  ctx.stroke();
+  ctx.shadowBlur = 0;
+  ctx.restore();
+
+  // Minute hand
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.rotate(mAngle + Math.PI / 2);
+  ctx.beginPath();
+  ctx.moveTo(0, R * 0.12);
+  ctx.lineTo(0, -R * 0.78);
+  ctx.strokeStyle = '#c084fc';
+  ctx.lineWidth = 3;
+  ctx.lineCap = 'round';
+  ctx.shadowBlur = 14; ctx.shadowColor = '#c084fc';
+  ctx.stroke();
+  ctx.shadowBlur = 0;
+  ctx.restore();
+
+  // Second hand
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.rotate(sAngle + Math.PI / 2);
+  ctx.beginPath();
+  ctx.moveTo(0, R * 0.18);
+  ctx.lineTo(0, -R * 0.88);
+  ctx.strokeStyle = '#00ffcc';
+  ctx.lineWidth = 1.5;
+  ctx.lineCap = 'round';
+  ctx.shadowBlur = 12; ctx.shadowColor = '#00ffcc';
+  ctx.stroke();
+  ctx.shadowBlur = 0;
+  ctx.restore();
+
+  // Center cap
+  ctx.beginPath(); ctx.arc(cx, cy, 7, 0, Math.PI * 2);
+  ctx.fillStyle = '#1a0530'; ctx.fill();
+  ctx.beginPath(); ctx.arc(cx, cy, 4, 0, Math.PI * 2);
+  ctx.fillStyle = '#c026d3';
+  ctx.shadowBlur = 16; ctx.shadowColor = '#c026d3';
+  ctx.fill(); ctx.shadowBlur = 0;
+
+  // Digital readout below
+  ctx.font = `500 ${Math.min(w, h) * 0.055}px 'Orbitron', monospace`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillStyle = 'rgba(200,132,252,0.6)';
+  ctx.fillText(`${t.pad12}:${t.pad(t.m)} ${t.ampm}`, cx, cy + R * 1.38);
+}
+
+/* ── 41. SOLAR WIND (Analog) ───────────────── */
+let solarWindAngle = 0;
+let solarRays = [];
+function initSolarWind(w, h) {
+  if (solarRays.length > 0) return;
+  for (let i = 0; i < 24; i++) {
+    solarRays.push({
+      angle: (i / 24) * Math.PI * 2,
+      len: Math.random() * 0.3 + 0.1,
+      speed: (Math.random() - 0.5) * 0.002,
+      width: Math.random() * 2 + 1
+    });
+  }
+}
+function drawSolarWind(ctx, w, h) {
+  const t = getTime();
+  const cx = w / 2, cy = h / 2;
+  const R = Math.min(w, h) * 0.33;
+  solarWindAngle += 0.002;
+  initSolarWind(w, h);
+
+  // Deep space bg
+  const bg = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.max(w, h));
+  bg.addColorStop(0, '#1a0800');
+  bg.addColorStop(0.5, '#0d0400');
+  bg.addColorStop(1, '#000');
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, w, h);
+
+  // Sun corona glow
+  for (let i = 3; i > 0; i--) {
+    const grd = ctx.createRadialGradient(cx, cy, R * 0.6, cx, cy, R * (1.2 + i * 0.4));
+    grd.addColorStop(0, `rgba(255,${140 + i * 20},0,${0.08 / i})`);
+    grd.addColorStop(1, 'transparent');
+    ctx.fillStyle = grd;
+    ctx.fillRect(0, 0, w, h);
+  }
+
+  // Solar rays
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.rotate(solarWindAngle);
+  for (const ray of solarRays) {
+    ray.angle += ray.speed;
+    const inner = R * 0.9;
+    const outer = R * (1.3 + ray.len);
+    const grd = ctx.createLinearGradient(
+      Math.cos(ray.angle) * inner, Math.sin(ray.angle) * inner,
+      Math.cos(ray.angle) * outer, Math.sin(ray.angle) * outer
+    );
+    grd.addColorStop(0, 'rgba(255,200,50,0.5)');
+    grd.addColorStop(1, 'transparent');
+    ctx.beginPath();
+    ctx.moveTo(Math.cos(ray.angle) * inner, Math.sin(ray.angle) * inner);
+    ctx.lineTo(Math.cos(ray.angle) * outer, Math.sin(ray.angle) * outer);
+    ctx.strokeStyle = grd;
+    ctx.lineWidth = ray.width;
+    ctx.stroke();
+  }
+  ctx.restore();
+
+  // Solar disk
+  const disk = ctx.createRadialGradient(cx - R * 0.1, cy - R * 0.1, 0, cx, cy, R * 0.85);
+  disk.addColorStop(0, '#fff7e6');
+  disk.addColorStop(0.3, '#ffd060');
+  disk.addColorStop(0.7, '#ff8c00');
+  disk.addColorStop(1, '#cc4400');
+  ctx.beginPath(); ctx.arc(cx, cy, R * 0.85, 0, Math.PI * 2);
+  ctx.fillStyle = disk; ctx.fill();
+
+  // Tick marks (hour dots)
+  for (let i = 0; i < 12; i++) {
+    const a = (i / 12) * Math.PI * 2 - Math.PI / 2;
+    const dr = R * 0.78;
+    ctx.beginPath();
+    ctx.arc(cx + Math.cos(a) * dr, cy + Math.sin(a) * dr, i % 3 === 0 ? 4 : 2, 0, Math.PI * 2);
+    ctx.fillStyle = i % 3 === 0 ? 'rgba(255,255,220,0.9)' : 'rgba(255,200,100,0.5)';
+    ctx.fill();
+  }
+
+  // Hands (dark, elegant on bright bg)
+  const hAngle = ((t.h12 + t.m / 60) / 12) * Math.PI * 2 - Math.PI / 2;
+  const mAngle = ((t.m + t.s / 60) / 60) * Math.PI * 2 - Math.PI / 2;
+  const sAngle = ((t.s + t.ms / 1000) / 60) * Math.PI * 2 - Math.PI / 2;
+
+  ctx.save(); ctx.translate(cx, cy);
+  // Hour hand
+  ctx.rotate(hAngle + Math.PI / 2);
+  ctx.beginPath(); ctx.moveTo(0, R * 0.08); ctx.lineTo(0, -R * 0.48);
+  ctx.strokeStyle = 'rgba(30,10,0,0.9)'; ctx.lineWidth = 6; ctx.lineCap = 'round'; ctx.stroke();
+  ctx.restore();
+
+  ctx.save(); ctx.translate(cx, cy);
+  // Minute hand
+  ctx.rotate(mAngle + Math.PI / 2);
+  ctx.beginPath(); ctx.moveTo(0, R * 0.1); ctx.lineTo(0, -R * 0.72);
+  ctx.strokeStyle = 'rgba(30,10,0,0.8)'; ctx.lineWidth = 4; ctx.lineCap = 'round'; ctx.stroke();
+  ctx.restore();
+
+  ctx.save(); ctx.translate(cx, cy);
+  // Second hand (bright red)
+  ctx.rotate(sAngle + Math.PI / 2);
+  ctx.beginPath(); ctx.moveTo(0, R * 0.15); ctx.lineTo(0, -R * 0.82);
+  ctx.strokeStyle = '#ff2200'; ctx.lineWidth = 1.5; ctx.lineCap = 'round';
+  ctx.shadowBlur = 10; ctx.shadowColor = '#ff4400';
+  ctx.stroke(); ctx.shadowBlur = 0;
+  ctx.restore();
+
+  // Center cap
+  ctx.beginPath(); ctx.arc(cx, cy, 7, 0, Math.PI * 2);
+  ctx.fillStyle = '#ff4400'; ctx.fill();
+  ctx.beginPath(); ctx.arc(cx, cy, 3, 0, Math.PI * 2);
+  ctx.fillStyle = '#fff'; ctx.fill();
+
+  // Date below
+  const d = new Date();
+  ctx.font = `500 ${Math.min(w, h) * 0.04}px 'Space Grotesk', sans-serif`;
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillStyle = 'rgba(255,200,80,0.7)';
+  ctx.fillText(d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }), cx, cy + R * 1.35);
+}
+
+/* ── 42. CYBER TERMINAL (Digital) ───────────── */
+let terminalLines = [];
+let terminalTick = 0;
+function initTerminal(w, h) {
+  if (terminalLines.length > 0) return;
+  const snippets = [
+    'SYS::CLOCK_DAEMON v4.2.1', 'KERNEL: time.module loaded',
+    'UPTIME: synced to NTP', 'FREQ: 60Hz render lock',
+    'MEM: 0x7FFF allocated', 'NET: LATENCY 0ms',
+    'CPU: TIMEKEEP thread active', 'GPU: VSYNC enabled',
+    'IRQ: timer interrupt OK', 'HASH: SHA256 verified',
+    'PROC: chrono.exe running', 'DRV: rtc.sys loaded'
+  ];
+  for (let i = 0; i < 14; i++) {
+    terminalLines.push({
+      text: snippets[i % snippets.length],
+      y: h * 0.05 + i * (h * 0.06),
+      alpha: Math.random() * 0.3 + 0.05,
+      speed: Math.random() * 0.3 + 0.1,
+      offset: Math.random() * w * 0.3
+    });
+  }
+}
+function drawTerminal(ctx, w, h) {
+  const t = getTime();
+  const cx = w / 2, cy = h / 2;
+  terminalTick++;
+  initTerminal(w, h);
+
+  // Dark terminal bg
+  ctx.fillStyle = '#020b02';
+  ctx.fillRect(0, 0, w, h);
+
+  // Scanlines
+  for (let y = 0; y < h; y += 4) {
+    ctx.fillStyle = 'rgba(0,0,0,0.25)';
+    ctx.fillRect(0, y, w, 2);
+  }
+
+  // Screen curvature vignette
+  const vig = ctx.createRadialGradient(cx, cy, Math.min(w, h) * 0.3, cx, cy, Math.max(w, h) * 0.75);
+  vig.addColorStop(0, 'transparent');
+  vig.addColorStop(1, 'rgba(0,0,0,0.6)');
+  ctx.fillStyle = vig;
+  ctx.fillRect(0, 0, w, h);
+
+  // Scrolling terminal lines
+  const fs = Math.min(w, h) * 0.028;
+  ctx.font = `400 ${fs}px 'Courier New', monospace`;
+  ctx.textBaseline = 'top';
+  for (const ln of terminalLines) {
+    ln.offset -= ln.speed;
+    if (ln.offset < -w) ln.offset = w * 0.5;
+    const flicker = 0.5 + 0.5 * Math.sin(terminalTick * 0.1 + ln.y);
+    ctx.fillStyle = `rgba(0,${Math.floor(180 + flicker * 75)},0,${ln.alpha * flicker})`;
+    ctx.textAlign = 'left';
+    ctx.fillText(ln.text, ln.offset, ln.y);
+  }
+
+  // Central panel bg
+  const pw = Math.min(w, h) * 0.88;
+  const ph = Math.min(w, h) * 0.42;
+  ctx.fillStyle = 'rgba(0,6,0,0.88)';
+  roundRect(ctx, cx - pw / 2, cy - ph / 2, pw, ph, 8);
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(0,255,70,0.3)';
+  ctx.lineWidth = 1;
+  roundRect(ctx, cx - pw / 2, cy - ph / 2, pw, ph, 8);
+  ctx.stroke();
+
+  // Corner brackets
+  const bl = Math.min(w, h) * 0.05;
+  const bx = cx - pw / 2, by = cy - ph / 2;
+  function corner(ox, oy, sx, sy) {
+    ctx.beginPath();
+    ctx.moveTo(ox + sx * bl, oy); ctx.lineTo(ox, oy); ctx.lineTo(ox, oy + sy * bl);
+    ctx.strokeStyle = '#00ff46'; ctx.lineWidth = 2; ctx.stroke();
+  }
+  corner(bx, by, 1, 1); corner(bx + pw, by, -1, 1);
+  corner(bx, by + ph, 1, -1); corner(bx + pw, by + ph, -1, -1);
+
+  // Prompt line top
+  ctx.font = `400 ${Math.min(w, h) * 0.032}px 'Courier New', monospace`;
+  ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+  ctx.fillStyle = 'rgba(0,255,70,0.5)';
+  ctx.fillText(`> PRISM_OS [build 2026] :: time.exe --live`, bx + 20, by + ph * 0.14);
+
+  // Main time
+  const timeStr = `${t.pad12}:${t.pad(t.m)}:${t.pad(t.s)}`;
+  ctx.font = `700 ${Math.min(w, h) * 0.17}px 'Orbitron', monospace`;
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.shadowBlur = 24; ctx.shadowColor = '#00ff46';
+  ctx.fillStyle = '#00ff46';
+  ctx.fillText(timeStr, cx, cy);
+  ctx.shadowBlur = 0;
+
+  // AM/PM
+  ctx.font = `600 ${Math.min(w, h) * 0.05}px 'Orbitron', monospace`;
+  ctx.fillStyle = 'rgba(0,200,50,0.7)';
+  ctx.fillText(t.ampm, cx, cy + ph * 0.25);
+
+  // Date / status line
+  const d = new Date();
+  ctx.font = `400 ${Math.min(w, h) * 0.03}px 'Courier New', monospace`;
+  ctx.textAlign = 'center';
+  ctx.fillStyle = 'rgba(0,180,40,0.5)';
+  ctx.fillText(`${d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' })}   STATUS: NOMINAL`, cx, by + ph * 0.88);
+
+  // Cursor blink
+  if (Math.floor(terminalTick / 30) % 2 === 0) {
+    ctx.fillStyle = '#00ff46';
+    ctx.fillRect(cx + pw * 0.4, by + ph * 0.8, 10, Math.min(w, h) * 0.03);
+  }
+}
+
+/* ── 43. GLASSMORPHIC (Digital) ─────────────── */
+let glassShift = 0;
+function drawGlass(ctx, w, h) {
+  const t = getTime();
+  const cx = w / 2, cy = h / 2;
+  const now = performance.now() / 1000;
+  glassShift += 0.004;
+
+  // Vibrant gradient background
+  const bg = ctx.createLinearGradient(0, 0, w, h);
+  bg.addColorStop(0, `hsl(${220 + Math.sin(glassShift) * 30},80%,12%)`);
+  bg.addColorStop(0.5, `hsl(${260 + Math.cos(glassShift * 0.7) * 30},75%,10%)`);
+  bg.addColorStop(1, `hsl(${300 + Math.sin(glassShift * 0.5) * 20},70%,8%)`);
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, w, h);
+
+  // Blob orbs behind glass
+  const orbs = [
+    { x: cx - w * 0.2 + Math.sin(now * 0.4) * 40, y: cy + Math.cos(now * 0.3) * 30, r: Math.min(w,h)*0.28, h: 210 },
+    { x: cx + w * 0.25 + Math.cos(now * 0.35) * 35, y: cy - Math.sin(now * 0.45) * 25, r: Math.min(w,h)*0.22, h: 270 },
+    { x: cx + Math.sin(now * 0.2) * 50, y: cy + h * 0.2, r: Math.min(w,h)*0.2, h: 330 },
+  ];
+  for (const o of orbs) {
+    const grd = ctx.createRadialGradient(o.x, o.y, 0, o.x, o.y, o.r);
+    grd.addColorStop(0, `hsla(${o.h},90%,60%,0.35)`);
+    grd.addColorStop(1, 'transparent');
+    ctx.fillStyle = grd;
+    ctx.fillRect(0, 0, w, h);
+  }
+
+  // Glass card
+  const cw = Math.min(w, h) * 0.9;
+  const ch = Math.min(w, h) * 0.48;
+  const cx2 = cx - cw / 2, cy2 = cy - ch / 2;
+
+  // Glass fill (simulate with semi-transparent layer)
+  ctx.save();
+  ctx.globalAlpha = 0.18;
+  ctx.fillStyle = '#fff';
+  roundRect(ctx, cx2, cy2, cw, ch, 24);
+  ctx.fill();
+  ctx.globalAlpha = 1;
+
+  // Glass border
+  const border = ctx.createLinearGradient(cx2, cy2, cx2 + cw, cy2 + ch);
+  border.addColorStop(0, 'rgba(255,255,255,0.5)');
+  border.addColorStop(0.5, 'rgba(255,255,255,0.15)');
+  border.addColorStop(1, 'rgba(255,255,255,0.05)');
+  ctx.strokeStyle = border;
+  ctx.lineWidth = 1.5;
+  roundRect(ctx, cx2, cy2, cw, ch, 24);
+  ctx.stroke();
+
+  // Shine highlight top
+  ctx.save();
+  ctx.globalAlpha = 0.12;
+  const shine = ctx.createLinearGradient(cx2, cy2, cx2, cy2 + ch * 0.45);
+  shine.addColorStop(0, '#fff');
+  shine.addColorStop(1, 'transparent');
+  ctx.fillStyle = shine;
+  roundRect(ctx, cx2, cy2, cw, ch * 0.45, 24);
+  ctx.fill();
+  ctx.globalAlpha = 1;
+  ctx.restore();
+
+  // Time display
+  const timeStr = `${t.pad12}:${t.pad(t.m)}:${t.pad(t.s)}`;
+  ctx.font = `700 ${Math.min(w, h) * 0.17}px 'Orbitron', monospace`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+
+  // Gradient text glow layers
+  ctx.shadowBlur = 40; ctx.shadowColor = `hsl(${260 + Math.sin(now) * 40},100%,70%)`;
+  ctx.fillStyle = `hsl(${250 + Math.sin(now * 0.5) * 40},100%,75%)`;
+  ctx.fillText(timeStr, cx, cy - ch * 0.08);
+  ctx.shadowBlur = 0;
+
+  // AM / PM badge
+  ctx.font = `600 ${Math.min(w, h) * 0.045}px 'Outfit', sans-serif`;
+  ctx.fillStyle = 'rgba(255,255,255,0.7)';
+  ctx.fillText(t.ampm, cx, cy + ch * 0.22);
+
+  // Date
+  const d = new Date();
+  const dStr = d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+  ctx.font = `300 ${Math.min(w, h) * 0.035}px 'Space Grotesk', sans-serif`;
+  ctx.fillStyle = 'rgba(255,255,255,0.45)';
+  ctx.fillText(dStr, cx, cy + ch * 0.38);
+
+  // Bottom progress bar (seconds)
+  const sPct = (t.s + t.ms / 1000) / 60;
+  const barW = cw * 0.75;
+  const barX = cx - barW / 2;
+  const barY = cy2 + ch - 22;
+  ctx.fillStyle = 'rgba(255,255,255,0.1)';
+  roundRect(ctx, barX, barY, barW, 6, 3);
+  ctx.fill();
+  const progGrd = ctx.createLinearGradient(barX, 0, barX + barW, 0);
+  progGrd.addColorStop(0, `hsl(${220 + now * 20 % 120},100%,70%)`);
+  progGrd.addColorStop(1, `hsl(${320 + now * 20 % 120},100%,70%)`);
+  ctx.fillStyle = progGrd;
+  ctx.shadowBlur = 10; ctx.shadowColor = '#a78bfa';
+  roundRect(ctx, barX, barY, barW * sPct, 6, 3);
+  ctx.fill();
+  ctx.shadowBlur = 0;
 }
 
 function buildStandaloneHTML(theme) {
